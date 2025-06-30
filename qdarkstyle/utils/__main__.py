@@ -32,7 +32,7 @@ from watchdog.events import FileSystemEventHandler
 from watchdog.observers import Observer
 
 # Local imports
-from qdarkstyle import PACKAGE_PATH
+from qdarkstyle import PACKAGE_PATH, SVG_PATH, IMAGES_PATH
 from qdarkstyle.dark.palette import DarkPalette
 from qdarkstyle.light.palette import LightPalette
 from qdarkstyle.utils import process_palette
@@ -52,7 +52,8 @@ class QSSFileHandler(FileSystemEventHandler):
         """Handle file system events."""
         if event.src_path.endswith('.qss'):
             # TODO: needs implementation for new palettes
-            process_palette(compile_for=self.args.create)
+            for palette in [DarkPalette, LightPalette]:
+                process_palette(palette=palette, compile_for=self.args.create)
             print('\n')
 
 
@@ -60,10 +61,10 @@ def main():
     """Process QRC files."""
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument('--qrc_dir',
-                        default=None,
+    parser.add_argument('--base_path',
+                        default=PACKAGE_PATH,
                         type=str,
-                        help="QRC file directory, relative to current directory.",)
+                        help="Base QRC file directory.",)
     parser.add_argument('--create',
                         default='qtpy',
                         choices=['pyqt5', 'pyqt6', 'pyside2', 'pyside6', 'qtpy', 'pyqtgraph', 'qt', 'qt5', 'all'],
@@ -72,6 +73,14 @@ def main():
     parser.add_argument('--watch', '-w',
                         action='store_true',
                         help="Watch for file changes.")
+    parser.add_argument('--base_svg_path',
+                        default=SVG_PATH,
+                        type=str,
+                        help="Base path were source .svg files are located.",)
+    parser.add_argument('--images_path',
+                        default=IMAGES_PATH,
+                        type=str,
+                        help="Path were documentation images are located.",)
 
     args = parser.parse_args()
 
@@ -81,14 +90,20 @@ def main():
         handler = QSSFileHandler(parser_args=args)
         observer.schedule(handler, path, recursive=True)
         try:
-            print('\nWatching QSS file for changes...\nPress Ctrl+C to exit\n')
+            print("\nWatching QSS file for changes...\nPress Ctrl+C to exit\n")
             observer.start()
         except KeyboardInterrupt:
             observer.stop()
         observer.join()
     else:
         for palette in [DarkPalette, LightPalette]:
-            process_palette(palette=palette, compile_for=args.create)
+            process_palette(
+                palette=palette,
+                compile_for=args.create,
+                base_svg_path=args.base_svg_path,
+                images_path=args.images_path,
+                base_path=args.base_path,
+            )
 
 
 if __name__ == "__main__":

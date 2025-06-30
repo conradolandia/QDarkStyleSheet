@@ -8,15 +8,27 @@ import logging
 import sys
 
 # Local imports
-from qdarkstyle import PACKAGE_PATH, QRC_FILE_SUFFIX
-from qdarkstyle.utils.images import (compile_qrc_file, create_images,
-                                     create_palette_image, generate_qrc_file)
+from qdarkstyle import PACKAGE_PATH, SVG_PATH, IMAGES_PATH
+from qdarkstyle.utils.images import (
+    compile_qrc_file,
+    create_images,
+    create_palette_image,
+    generate_qrc_file,
+)
 from qdarkstyle.utils.scss import create_qss
 
 _logger = logging.getLogger(__name__)
 
 
-def process_palette(palette, compile_for='qtpy'):
+def process_palette(
+    palette,
+    compile_for="qtpy",
+    base_svg_path=SVG_PATH,
+    images_path=IMAGES_PATH,
+    base_path=PACKAGE_PATH,
+    resource_prefix="qss_icons",
+    style_prefix="qdarkstyle",
+):
     """Process palette class to create a new palette file/folders.
 
     It generates all files below, in this order:
@@ -43,8 +55,10 @@ def process_palette(palette, compile_for='qtpy'):
     """
 
     if palette is None:
-        _logger.error("Please pass a palette class in order to create its "
-                      "associated images")
+        _logger.error(
+            "Please pass a palette class in order to create its "
+            "associated images"
+        )
         sys.exit(1)
 
     if palette.ID is None:
@@ -58,16 +72,28 @@ def process_palette(palette, compile_for='qtpy'):
     # are not used
 
     print(f"-- GENERATING PALETTE IMAGE FOR: {id_}")
-    create_palette_image(palette=palette)
+    create_palette_image(
+        palette=palette, base_svg_path=base_svg_path, path=images_path
+    )
 
     print(f"-- GENERATING IMAGE FILES (.svg > .png) FOR: {id_}")
-    create_images(palette=palette)
+    create_images(
+        base_svg_path=base_svg_path, base_path=base_path, palette=palette
+    )
 
     print(f"-- GENERATING QRC FILE FOR: {id_}")
-    generate_qrc_file(palette=palette)
+    generate_qrc_file(
+        resource_prefix=resource_prefix,
+        style_prefix=style_prefix,
+        palette=palette,
+        base_path=base_path,
+    )
 
     print(f"-- GENERATING QSS FILE (.scss > .qss) FOR: {id_}")
-    create_qss(palette=palette)
+    create_qss(palette=palette, base_path=base_path)
 
     print(f"-- CONVERTING RESOURCE FILE (. qrc > _rc.py/.rcc) FOR: {id_}")
-    compile_qrc_file(compile_for=compile_for, palette=palette)
+    compile_qrc_file(
+        compile_for=compile_for,
+        palette=palette,
+    )

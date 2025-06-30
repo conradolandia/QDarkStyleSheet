@@ -91,10 +91,18 @@ def convert_svg_to_png(svg_path, png_path, height, width):
     img.save(os.path.abspath(png_path))
 
 
-def create_palette_image(base_svg_path=SVG_PATH, path=IMAGES_PATH,
-                         palette=None):
+def create_palette_image(
+    base_svg_path=SVG_PATH, path=PACKAGE_PATH, palette=None
+):
     """
     Create palette image svg and png image on specified path.
+
+    Args:
+        base_svg_path (str, optional): Base path for the `.svg` source files.
+            Defaults to `SVG_PATH`.
+        path (str): Path to save generated image files (`.svg` and `.png`).
+            Defaults to `PACKAGE_PATH`.
+        palette (Palette, optional): Palette.
     """
     # Needed to use QPixmap
     _ = QApplication([])
@@ -107,6 +115,12 @@ def create_palette_image(base_svg_path=SVG_PATH, path=IMAGES_PATH,
     if palette.ID is None:
         _logger.error("A QDarkStyle palette requires an ID!")
         sys.exit(1)
+
+    if not base_svg_path:
+        base_svg_path = SVG_PATH
+
+    if not path:
+        path = IMAGES_PATH
 
     base_palette_svg_path = os.path.join(base_svg_path, 'base_palette.svg')
     palette_svg_path = os.path.join(path, palette.ID, 'palette.svg')
@@ -133,7 +147,7 @@ def create_palette_image(base_svg_path=SVG_PATH, path=IMAGES_PATH,
     return palette_svg_path, palette_png_path
 
 
-def create_images(base_svg_path=SVG_PATH, rc_path=None, palette=None):
+def create_images(base_svg_path=SVG_PATH, base_path=PACKAGE_PATH, palette=None):
     """Create resources `rc` png image files from base svg files and palette.
 
     Search all SVG files in `base_svg_path` excluding IMAGE_BLACKLIST,
@@ -141,8 +155,10 @@ def create_images(base_svg_path=SVG_PATH, rc_path=None, palette=None):
     state generating PNG images for each size `heights`.
 
     Args:
-        base_svg_path (str, optional): [description]. Defaults to SVG_PATH.
-        rc_path (str, optional): [description].
+        base_svg_path (str, optional): Base path for the `.svg` source files.
+            Defaults to `SVG_PATH`.
+        base_path (str): Base path for the palette directory, required for
+            custom palettes. Defaults to `PACKAGE_PATH`.
         palette (Palette, optional): Palette.
     """
 
@@ -158,8 +174,13 @@ def create_images(base_svg_path=SVG_PATH, rc_path=None, palette=None):
         _logger.error("A QDarkStyle palette requires an ID!")
         sys.exit(1)
 
-    if not rc_path:
-        rc_path = os.path.join(PACKAGE_PATH, palette.ID, 'rc')
+    if not base_svg_path:
+        base_svg_path = SVG_PATH
+
+    if not base_path:
+        base_path = PACKAGE_PATH
+
+    rc_path = os.path.join(base_path, palette.ID, 'rc')
 
     temp_dir = tempfile.mkdtemp()
     svg_fnames = [f for f in os.listdir(base_svg_path) if f.endswith('.svg')]
@@ -235,8 +256,12 @@ def create_images(base_svg_path=SVG_PATH, rc_path=None, palette=None):
     _logger.info(f"RC links in _style.scss not in RC: {rc_list}")
 
 
-def generate_qrc_file(resource_prefix='qss_icons', style_prefix='qdarkstyle',
-                      palette=None):
+def generate_qrc_file(
+    resource_prefix="qss_icons",
+    style_prefix="qdarkstyle",
+    palette=None,
+    base_path=PACKAGE_PATH,
+):
     """
     Generate the QRC file programmatically.
 
@@ -248,6 +273,8 @@ def generate_qrc_file(resource_prefix='qss_icons', style_prefix='qdarkstyle',
         style_prefix (str, optional): Prefix used to this style.
             Defaults to 'qdarkstyle'.
         palette (Palette, optional): Palette.
+        base_path (str): Base path for the palette directory, required for
+            custom palettes. Defaults to `PACKAGE_PATH`.
     """
 
     files = []
@@ -261,7 +288,10 @@ def generate_qrc_file(resource_prefix='qss_icons', style_prefix='qdarkstyle',
         _logger.error("A QDarkStyle palette requires an ID!")
         sys.exit(1)
 
-    palette_path = os.path.join(PACKAGE_PATH, palette.ID)
+    if not base_path:
+        base_path = PACKAGE_PATH
+
+    palette_path = os.path.join(base_path, palette.ID)
     rc_path = os.path.join(palette_path, 'rc')
     qss_file = palette.ID + QSS_FILE_SUFFIX
     qrc_file = palette.ID + QRC_FILE_SUFFIX
@@ -324,9 +354,9 @@ def get_rc_links_from_scss(pattern=r"\/rc.*\.png"):
     return rc_list
 
 
-def compile_qrc_file(compile_for='qtpy', qrc_path=None, palette=None):
+def compile_qrc_file(compile_for='qtpy', base_path=PACKAGE_PATH, palette=None):
     """
-    Compile the QRC file converting it to _rc.py nad/or .rcc.
+    Compile the QRC file converting it to _rc.py and/or .rcc.
 
     When using an abstraction layer (QtPy/pyqtgraph) over a binging
     (PySide/PyQt), in the end, it changes the importing name.
@@ -338,8 +368,8 @@ def compile_qrc_file(compile_for='qtpy', qrc_path=None, palette=None):
         compile_for (list, optional): Prefix used in resources.
             Defaults to 'qtpy'. Possible values are 'qtpy', 'pyqtgraph',
             'pyqt', 'pyqt5', 'pyside', 'pyside2', 'qt', 'qt5', 'all'.
-        qrc_path (str, optional): .qrc folder path.
-            Defaults to None.
+        base_path (str): Base path for the palette directory, required for
+            custom palettes. Defaults to `PACKAGE_PATH`.
         palette (Palette, optional): Palette.
     """
 
@@ -352,8 +382,10 @@ def compile_qrc_file(compile_for='qtpy', qrc_path=None, palette=None):
         _logger.error("A QDarkStyle palette requires an ID!")
         sys.exit(1)
 
-    if not qrc_path:
-        qrc_path = os.path.join(PACKAGE_PATH, palette.ID)
+    if not base_path:
+        base_path = PACKAGE_PATH
+
+    qrc_path = os.path.join(base_path, palette.ID)
 
     qrc_file = palette.ID + QRC_FILE_SUFFIX
 

@@ -112,7 +112,7 @@ def _create_qss(main_scss_path, qss_filepath, header=HEADER_QSS):
     return data
 
 
-def create_qss(palette, base_path=''):
+def create_qss(palette, base_path=PACKAGE_PATH):
     """Create variables files and run qtsass compilation.
 
     This function will use the structure that must contain::
@@ -121,7 +121,7 @@ def create_qss(palette, base_path=''):
             [palette.ID]
                 main.scss
             qss
-                _style.scss
+                _styles.scss
 
     The structure after the execution will contain::
 
@@ -131,12 +131,12 @@ def create_qss(palette, base_path=''):
                 [palette.ID]style.qss
                 main.scss
             qss
-                _style.scss
+                _styles.scss
 
     Args:
         palette (Palette): Palette class.
         base_path (str): Base path for the palette directory, required for
-            custom palettes. Defaults to '' that uses `[PACKAGE_PATH]`.
+            custom palettes. Defaults to `PACKAGE_PATH`.
 
     Returns:
         str: Stylesheet in string format.
@@ -146,11 +146,10 @@ def create_qss(palette, base_path=''):
         print("A QDarkStyle palette requires an ID!")
         sys.exit(1)
 
-    palette_path = os.path.join(PACKAGE_PATH, palette.ID)
+    if not base_path:
+        base_path = PACKAGE_PATH
 
-    if base_path:
-        palette_path = os.path.join(base_path, palette.ID)
-
+    palette_path = os.path.join(base_path, palette.ID)
     _logger.info(f"Creating QSS for palette: '{palette.ID} ...")
     _logger.info(f"Palette path: {palette_path}")
 

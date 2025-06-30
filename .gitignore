@@ -37,5 +37,8 @@ deb_dist
 /.idea/
 .tox
 
+# spyder-ide project files
+.spyproject/
+
 # OSX files
 .DS_Store
