@@ -29,6 +29,8 @@ class Palette(object):
     COLOR_ACCENT_4 = ''
     COLOR_ACCENT_5 = ''
 
+    COLOR_DISABLED = ''
+
     OPACITY_TOOLTIP = 0
 
     # Size
@@ -100,3 +102,8 @@ class Palette(object):
     def color_palette(cls):
         """Return the ordered colored palette dictionary."""
         return cls.to_dict(colors_only=True)
+
+    @staticmethod
+    def from_dict(class_values, class_name="FromDictPalette"):
+        """Return palette class definition from dictionary."""
+        return type(class_name, (Palette, ), class_values)

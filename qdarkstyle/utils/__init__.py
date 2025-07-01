@@ -5,10 +5,19 @@ Utilities for processing SASS and images from default and custom palette.
 
 # Standard library imports
 import logging
+import os
+import shutil
 import sys
 
 # Local imports
-from qdarkstyle import PACKAGE_PATH, SVG_PATH, IMAGES_PATH
+from qdarkstyle import (
+    PACKAGE_PATH,
+    SVG_PATH,
+    IMAGES_PATH,
+    MAIN_SCSS_FILE,
+    QSS_PATH,
+    STYLES_SCSS_FILE,
+)
 from qdarkstyle.utils.images import (
     compile_qrc_file,
     create_images,
@@ -39,12 +48,6 @@ def process_palette(
         - QSS file in [palette_id]/[palette_id]style.qss.
         - Compiled QRC file in [palette_id]/[palette_id]style_rc.py
 
-    TODO:
-        - Must generalize to create custom palettes and folder paths.
-        - Must create/copy all files under [palette_id], such as main.scss,
-            __init__.py, palette.py.
-        - Add option or avoid adding the palette under docs for custom palettes.
-
     Args:
         palette (Palette): Palette.
         compile_for (list, optional): Prefix used in resources.
@@ -52,6 +55,16 @@ def process_palette(
             'pyqt', 'pyqt5', 'pyqt6',
             'pyside', 'pyside2', 'pyside6',
             'qt', 'qt5', qt6, 'all'.
+        base_svg_path (str, optional): Base path for the `.svg` source files.
+            Defaults to `SVG_PATH`.
+        base_path (str): Base path for the palette directory, required for
+            custom palettes. Defaults to `PACKAGE_PATH`.
+        images_path (str): Path to save generated image files (`palette.svg` and `palette.png`).
+            Defaults to `IMAGES_PATH`.
+        resource_prefix (str, optional): Prefix used in resources.
+            Defaults to 'qss_icons'.
+        style_prefix (str, optional): Prefix used to this style.
+            Defaults to 'qdarkstyle'.
     """
 
     if palette is None:
@@ -67,6 +80,50 @@ def process_palette(
 
     id_ = palette.ID
     print(f"-- PROCESSING THEME: {id_}")
+
+    # Create base palette directory and files from id
+    palette_path = os.path.join(base_path, id_)
+    if not os.path.exists(palette_path):
+        os.mkdir(palette_path)
+
+    init_path = os.path.join(palette_path, "__init__.py")
+    if not os.path.isfile(init_path):
+        with open(init_path, mode="x"):
+            pass
+
+    palette_file_path = os.path.join(palette_path, "palette.py")
+    if not os.path.isfile(palette_file_path):
+        with open(palette_file_path, mode="w") as palette_file:
+            palette_file.write("from qdarkstyle.palette import Palette\n\n\n")
+            palette_file.write(f"class {palette.__name__}(Palette):\n")
+            palette_file.write(f'    """{palette.__name__} palette variables."""\n\n')
+            for attr, value in palette.to_dict().items():
+                if attr in ["ID", "OPACITY_TOOLTIP"]:
+                    palette_file.write(f"    {attr} = {value}\n")
+                else:
+                    palette_file.write(f'    {attr} = "{value}"\n')
+
+    qss_path = os.path.join(base_path, "qss")
+    if not os.path.exists(qss_path):
+        os.mkdir(qss_path)
+
+    main_scss_path = os.path.join(palette_path, MAIN_SCSS_FILE)
+    if not os.path.exists(main_scss_path):
+        # Create basic `main.scss` file for custom path
+        with open(main_scss_path, "w") as main_scss:
+            main_scss.write(f"""
+/* {id_} Style - QDarkStyleSheet ------------------------------------------ */
+
+@import '_variables';
+@import '../qss/_styles';
+
+""")
+
+    styles_scss_path = os.path.join(qss_path, STYLES_SCSS_FILE)
+    if not os.path.exists(styles_scss_path):
+        # Copy `qss/_styles.scss` file to custom path
+        base_styles_scss_path = os.path.join(QSS_PATH, STYLES_SCSS_FILE)
+        shutil.copy(base_styles_scss_path, styles_scss_path)
 
     # TODO: delete/remove all files and folders to ensure that old files
     # are not used
@@ -96,4 +153,5 @@ def process_palette(
     compile_qrc_file(
         compile_for=compile_for,
         palette=palette,
+        base_path=base_path,
     )

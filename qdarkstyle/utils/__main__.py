@@ -33,6 +33,7 @@ from watchdog.observers import Observer
 
 # Local imports
 from qdarkstyle import PACKAGE_PATH, SVG_PATH, IMAGES_PATH
+from qdarkstyle.palette import Palette
 from qdarkstyle.dark.palette import DarkPalette
 from qdarkstyle.light.palette import LightPalette
 from qdarkstyle.utils import process_palette
@@ -57,30 +58,74 @@ class QSSFileHandler(FileSystemEventHandler):
             print('\n')
 
 
+# See https://sumit-ghosh.com/posts/parsing-dictionary-key-value-pairs-kwargs-argparse-python/
+class CustomPaletteParser(argparse.Action):
+    def __call__(self, parser, namespace, values, option_string=None):
+        setattr(namespace, self.dest, dict())
+        for value in values:
+            key, value = value.split('=')
+            getattr(namespace, self.dest)[key] = value
+
+
 def main():
     """Process QRC files."""
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument('--base_path',
-                        default=PACKAGE_PATH,
-                        type=str,
-                        help="Base QRC file directory.",)
-    parser.add_argument('--create',
-                        default='qtpy',
-                        choices=['pyqt5', 'pyqt6', 'pyside2', 'pyside6', 'qtpy', 'pyqtgraph', 'qt', 'qt5', 'all'],
-                        type=str,
-                        help="Choose which one would be generated.")
-    parser.add_argument('--watch', '-w',
-                        action='store_true',
-                        help="Watch for file changes.")
-    parser.add_argument('--base_svg_path',
-                        default=SVG_PATH,
-                        type=str,
-                        help="Base path were source .svg files are located.",)
-    parser.add_argument('--images_path',
-                        default=IMAGES_PATH,
-                        type=str,
-                        help="Path were documentation images are located.",)
+    parser.add_argument(
+        "--base_path",
+        default=PACKAGE_PATH,
+        type=str,
+        help="Base QRC file directory.",
+    )
+    parser.add_argument(
+        "--create",
+        default="qtpy",
+        choices=[
+            "pyqt5",
+            "pyqt6",
+            "pyside2",
+            "pyside6",
+            "qtpy",
+            "pyqtgraph",
+            "qt",
+            "qt5",
+            "all",
+        ],
+        type=str,
+        help="Choose which one would be generated.",
+    )
+    parser.add_argument(
+        "--watch", "-w", action="store_true", help="Watch for file changes."
+    )
+    parser.add_argument(
+        "--base_svg_path",
+        default=SVG_PATH,
+        type=str,
+        help="Base path were source .svg files are located.",
+    )
+    parser.add_argument(
+        "--images_path",
+        default=IMAGES_PATH,
+        type=str,
+        help="Path were documentation images are located.",
+    )
+    parser.add_argument(
+        "--resource_prefix",
+        default="qdarkstyle",
+        type=str,
+        help="Prefix used to this style.",
+    )
+    parser.add_argument(
+        "--style_prefix",
+        default="qss_icons",
+        type=str,
+        help="Prefix used in resources.",
+    )
+    parser.add_argument(
+        "--custom_palette",
+        nargs="*",
+        action=CustomPaletteParser,
+    )
 
     args = parser.parse_args()
 
@@ -95,6 +140,18 @@ def main():
         except KeyboardInterrupt:
             observer.stop()
         observer.join()
+    elif args.custom_palette:
+        process_palette(
+            palette=Palette.from_dict(
+                args.custom_palette,
+                class_name=f'{args.custom_palette["ID"].capitalize()}Palette',
+            ),
+            compile_for=args.create,
+            base_svg_path=args.base_svg_path,
+            images_path=args.images_path,
+            base_path=args.base_path,
+        )
+
     else:
         for palette in [DarkPalette, LightPalette]:
             process_palette(

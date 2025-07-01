@@ -92,7 +92,7 @@ def convert_svg_to_png(svg_path, png_path, height, width):
 
 
 def create_palette_image(
-    base_svg_path=SVG_PATH, path=PACKAGE_PATH, palette=None
+    base_svg_path=SVG_PATH, path=IMAGES_PATH, palette=None
 ):
     """
     Create palette image svg and png image on specified path.
@@ -101,7 +101,7 @@ def create_palette_image(
         base_svg_path (str, optional): Base path for the `.svg` source files.
             Defaults to `SVG_PATH`.
         path (str): Path to save generated image files (`.svg` and `.png`).
-            Defaults to `PACKAGE_PATH`.
+            Defaults to `IMAGES_PATH`.
         palette (Palette, optional): Palette.
     """
     # Needed to use QPixmap
