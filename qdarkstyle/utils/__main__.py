@@ -24,6 +24,7 @@ Links to understand those tools:
 
 # Standard library imports
 import argparse
+import importlib.util
 import logging
 import sys
 
@@ -58,7 +59,7 @@ class QSSFileHandler(FileSystemEventHandler):
             print('\n')
 
 
-# See https://sumit-ghosh.com/posts/parsing-dictionary-key-value-pairs-kwargs-argparse-python/
+# Based on https://sumit-ghosh.com/posts/parsing-dictionary-key-value-pairs-kwargs-argparse-python/
 class CustomPaletteParser(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
         setattr(namespace, self.dest, dict())
@@ -67,8 +68,19 @@ class CustomPaletteParser(argparse.Action):
             getattr(namespace, self.dest)[key] = value
 
 
+def import_from_file(module_name, file_path):
+    # Taken from: https://gist.github.com/mportesdev/afb2ec26021ccabee0f67d6f7d18be3f
+    spec = importlib.util.spec_from_file_location(module_name, file_path)
+    module = importlib.util.module_from_spec(spec)
+    sys.modules[module_name] = module
+    spec.loader.exec_module(module)
+
+    return module
+
+
 def main():
     """Process QRC files."""
+    logging.basicConfig(level=logging.DEBUG)
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument(
@@ -76,26 +88,6 @@ def main():
         default=PACKAGE_PATH,
         type=str,
         help="Base QRC file directory.",
-    )
-    parser.add_argument(
-        "--create",
-        default="qtpy",
-        choices=[
-            "pyqt5",
-            "pyqt6",
-            "pyside2",
-            "pyside6",
-            "qtpy",
-            "pyqtgraph",
-            "qt",
-            "qt5",
-            "all",
-        ],
-        type=str,
-        help="Choose which one would be generated.",
-    )
-    parser.add_argument(
-        "--watch", "-w", action="store_true", help="Watch for file changes."
     )
     parser.add_argument(
         "--base_svg_path",
@@ -122,9 +114,48 @@ def main():
         help="Prefix used in resources.",
     )
     parser.add_argument(
-        "--custom_palette",
+        "--custom_palette_key_value",
         nargs="*",
         action=CustomPaletteParser,
+        help="List of `key=value` definitions for a custom palette. "
+             "Alternative to `--custom_palette_file` + "
+             "`--custom_palette_class_name` args.",
+    )
+    parser.add_argument(
+        "--custom_palette_file",
+        type=str,
+        help="Path to a Python file with the custom Palette subclass "
+             "definition. Alternative to `--custom_palette_key_value` arg. "
+             "Needs to be used alongside `--custom_palette_class_name` "
+             "to work.",
+    )
+    parser.add_argument(
+        "--custom_palette_class_name",
+        type=str,
+        help="Class name importable from the given Python file with the custom "
+             "Palette subclass definition. Alternative to "
+             "`--custom_palette_key_value` arg. Needs to be used alongside "
+             "`--custom_palette_file` to work.",
+    )
+    parser.add_argument(
+        "--create",
+        default="qtpy",
+        choices=[
+            "pyqt5",
+            "pyqt6",
+            "pyside2",
+            "pyside6",
+            "qtpy",
+            "pyqtgraph",
+            "qt",
+            "qt5",
+            "all",
+        ],
+        type=str,
+        help="Choose which one would be generated.",
+    )
+    parser.add_argument(
+        "--watch", "-w", action="store_true", help="Watch for file changes."
     )
 
     args = parser.parse_args()
@@ -140,7 +171,7 @@ def main():
         except KeyboardInterrupt:
             observer.stop()
         observer.join()
-    elif args.custom_palette:
+    elif args.custom_palette_key_value:
         process_palette(
             palette=Palette.from_dict(
                 args.custom_palette,
@@ -151,7 +182,20 @@ def main():
             images_path=args.images_path,
             base_path=args.base_path,
         )
-
+    elif args.custom_palette_file and args.custom_palette_class_name:
+        custom_palette_module = import_from_file(
+            "palette", args.custom_palette_file,
+        )
+        custom_palette_class = getattr(
+            custom_palette_module, args.custom_palette_class_name,
+        )
+        process_palette(
+            palette=custom_palette_class,
+            compile_for=args.create,
+            base_svg_path=args.base_svg_path,
+            images_path=args.images_path,
+            base_path=args.base_path,
+        )
     else:
         for palette in [DarkPalette, LightPalette]:
             process_palette(
@@ -164,5 +208,4 @@ def main():
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
     sys.exit(main())

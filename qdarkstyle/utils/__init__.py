@@ -79,7 +79,7 @@ def process_palette(
         sys.exit(1)
 
     id_ = palette.ID
-    print(f"-- PROCESSING THEME: {id_}")
+    _logger.info(f"-- PROCESSING THEME: {id_}")
 
     # Create base palette directory and files from id
     palette_path = os.path.join(base_path, id_)
@@ -128,17 +128,17 @@ def process_palette(
     # TODO: delete/remove all files and folders to ensure that old files
     # are not used
 
-    print(f"-- GENERATING PALETTE IMAGE FOR: {id_}")
+    _logger.info(f"-- GENERATING PALETTE IMAGE FOR: {id_}")
     create_palette_image(
         palette=palette, base_svg_path=base_svg_path, path=images_path
     )
 
-    print(f"-- GENERATING IMAGE FILES (.svg > .png) FOR: {id_}")
+    _logger.info(f"-- GENERATING IMAGE FILES (.svg > .png) FOR: {id_}")
     create_images(
         base_svg_path=base_svg_path, base_path=base_path, palette=palette
     )
 
-    print(f"-- GENERATING QRC FILE FOR: {id_}")
+    _logger.info(f"-- GENERATING QRC FILE FOR: {id_}")
     generate_qrc_file(
         resource_prefix=resource_prefix,
         style_prefix=style_prefix,
@@ -146,10 +146,10 @@ def process_palette(
         base_path=base_path,
     )
 
-    print(f"-- GENERATING QSS FILE (.scss > .qss) FOR: {id_}")
+    _logger.info(f"-- GENERATING QSS FILE (.scss > .qss) FOR: {id_}")
     create_qss(palette=palette, base_path=base_path)
 
-    print(f"-- CONVERTING RESOURCE FILE (. qrc > _rc.py/.rcc) FOR: {id_}")
+    _logger.info(f"-- CONVERTING RESOURCE FILE (. qrc > _rc.py/.rcc) FOR: {id_}")
     compile_qrc_file(
         compile_for=compile_for,
         palette=palette,
