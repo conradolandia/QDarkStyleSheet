@@ -52,7 +52,7 @@ class QSSFileHandler(FileSystemEventHandler):
 
     def on_modified(self, event):
         """Handle file system events."""
-        if event.src_path.endswith('.qss'):
+        if event.src_path.endswith('palette.py'):
             # TODO: needs implementation for new palettes
             for palette in [DarkPalette, LightPalette]:
                 process_palette(palette=palette, compile_for=self.args.create)
