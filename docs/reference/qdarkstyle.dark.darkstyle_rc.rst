@@ -1,7 +1,7 @@
-scripts.run\_ui\_css\_edition module
+qdarkstyle.dark.darkstyle\_rc module
 ====================================
 
-.. automodule:: scripts.run_ui_css_edition
+.. automodule:: qdarkstyle.dark.darkstyle_rc
    :members:
    :undoc-members:
    :show-inheritance:

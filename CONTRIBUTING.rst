@@ -326,7 +326,7 @@ Check `test <./test>`__ files to more details. Tests will keep our
 application stable.
 
 If You Are a Maintainer, Go Ahead to Production
-----------------------------------------------
+-----------------------------------------------
 
 Of course, until you start these steps, make sure the package have
 passed all tests and checkers before continuing. You must have accounts to
@@ -359,9 +359,7 @@ maintainer in both.
 
    ``twine check dist/*``
 
-7. Try upload in `PyPI test
-   page <https://test.pypi.org/project/QDarkStyle>`__ platform before
-   the official
+7. Try upload in `PyPI test page <https://test.pypi.org/project/QDarkStyle>`__ platform before the official
 
    ``twine upload --repository-url https://test.pypi.org/legacy/ dist/*``
 
@@ -373,8 +371,7 @@ maintainer in both.
 
    ``pip uninstall qdarkstyle -y``
 
-10. Upload to `PyPI official
-   page <https://pypi.python.org/pypi/QDarkStyle>`__
+10. Upload to `PyPI official page <https://pypi.python.org/pypi/QDarkStyle>`__
 
    ``twine upload --repository-url https://upload.pypi.org/legacy/ dist/*``
 
