@@ -439,7 +439,7 @@ maintainer in both.
 
    ``twine check dist/*``
 
-8. Try upload in `PyPI test page <https://test.pypi.org/project/QDarkStyle>`__ platform before the official
+7. Try upload in `PyPI test page <https://test.pypi.org/project/QDarkStyle>`__ platform before the official
 
    ``twine upload --repository-url https://test.pypi.org/legacy/ dist/*``
 
@@ -451,7 +451,7 @@ maintainer in both.
 
    ``pip uninstall qdarkstyle -y``
 
-11. Upload to `PyPI official page <https://pypi.python.org/pypi/QDarkStyle>`__
+10. Upload to `PyPI official page <https://pypi.python.org/pypi/QDarkStyle>`__
 
    ``twine upload --repository-url https://upload.pypi.org/legacy/ dist/*``
 
