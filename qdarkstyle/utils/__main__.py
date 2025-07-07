@@ -84,37 +84,37 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument(
-        "--base_path",
+        "--base-path",
         default=PACKAGE_PATH,
         type=str,
         help="Base QRC file directory.",
     )
     parser.add_argument(
-        "--base_svg_path",
+        "--base-svg-path",
         default=SVG_PATH,
         type=str,
         help="Base path were source .svg files are located.",
     )
     parser.add_argument(
-        "--images_path",
+        "--images-path",
         default=IMAGES_PATH,
         type=str,
         help="Path were documentation images are located.",
     )
     parser.add_argument(
-        "--resource_prefix",
+        "--resource-prefix",
         default="qdarkstyle",
         type=str,
         help="Prefix used to this style.",
     )
     parser.add_argument(
-        "--style_prefix",
+        "--style-prefix",
         default="qss_icons",
         type=str,
         help="Prefix used in resources.",
     )
     parser.add_argument(
-        "--custom_palette_key_value",
+        "--custom-palette-key-value",
         nargs="*",
         action=CustomPaletteParser,
         help="List of `key=value` definitions for a custom palette. "
@@ -122,7 +122,7 @@ def main():
              "`--custom_palette_class_name` args.",
     )
     parser.add_argument(
-        "--custom_palette_file",
+        "--custom-palette-file",
         type=str,
         help="Path to a Python file with the custom Palette subclass "
              "definition. Alternative to `--custom_palette_key_value` arg. "
@@ -130,7 +130,7 @@ def main():
              "to work.",
     )
     parser.add_argument(
-        "--custom_palette_class_name",
+        "--custom-palette-class-name",
         type=str,
         help="Class name importable from the given Python file with the custom "
              "Palette subclass definition. Alternative to "
