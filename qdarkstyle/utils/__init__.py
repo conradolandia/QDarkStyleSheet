@@ -33,7 +33,8 @@ def process_palette(
     palette,
     compile_for="qtpy",
     base_svg_path=SVG_PATH,
-    images_path=IMAGES_PATH,
+    palette_images=True,
+    palette_images_path=IMAGES_PATH,
     base_path=PACKAGE_PATH,
     resource_prefix="qss_icons",
     style_prefix="qdarkstyle",
@@ -59,8 +60,11 @@ def process_palette(
             Defaults to `SVG_PATH`.
         base_path (str): Base path for the palette directory, required for
             custom palettes. Defaults to `PACKAGE_PATH`.
-        images_path (str): Path to save generated image files (`palette.svg` and `palette.png`).
-            Defaults to `IMAGES_PATH`.
+        palette_images (bool): If the preview palette images should be generated
+            or not. Default False. See `palette_images_path` to set the path
+            were files will be created.
+        palette_images_path (str): Path to save generated image files
+            (`palette.svg` and `palette.png`). Defaults to `IMAGES_PATH`.
         resource_prefix (str, optional): Prefix used in resources.
             Defaults to 'qss_icons'.
         style_prefix (str, optional): Prefix used to this style.
@@ -126,12 +130,13 @@ def process_palette(
         shutil.copy(base_styles_scss_path, styles_scss_path)
 
     # TODO: delete/remove all files and folders to ensure that old files
-    # are not used
+    # are not used if required
 
-    _logger.info(f"-- GENERATING PALETTE IMAGE FOR: {id_}")
-    create_palette_image(
-        palette=palette, base_svg_path=base_svg_path, path=images_path
-    )
+    if palette_images:
+        _logger.info(f"-- GENERATING PALETTE IMAGE FOR: {id_}")
+        create_palette_image(
+            palette=palette, base_svg_path=base_svg_path, path=palette_images_path
+        )
 
     _logger.info(f"-- GENERATING IMAGE FILES (.svg > .png) FOR: {id_}")
     create_images(

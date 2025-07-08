@@ -52,11 +52,11 @@ class QSSFileHandler(FileSystemEventHandler):
 
     def on_modified(self, event):
         """Handle file system events."""
-        if event.src_path.endswith('palette.py'):
+        if event.src_path.endswith("palette.py"):
             # TODO: needs implementation for new palettes
             for palette in [DarkPalette, LightPalette]:
                 process_palette(palette=palette, compile_for=self.args.create)
-            print('\n')
+            _logger.info("\n")
 
 
 # Based on https://sumit-ghosh.com/posts/parsing-dictionary-key-value-pairs-kwargs-argparse-python/
@@ -64,7 +64,7 @@ class CustomPaletteParser(argparse.Action):
     def __call__(self, parser, namespace, values, option_string=None):
         setattr(namespace, self.dest, dict())
         for value in values:
-            key, value = value.split('=')
+            key, value = value.split("=")
             getattr(namespace, self.dest)[key] = value
 
 
@@ -87,7 +87,7 @@ def main():
         "--base-path",
         default=PACKAGE_PATH,
         type=str,
-        help="Base QRC file directory.",
+        help="Base directory where palette assest will be generated.",
     )
     parser.add_argument(
         "--base-svg-path",
@@ -96,16 +96,25 @@ def main():
         help="Base path were source .svg files are located.",
     )
     parser.add_argument(
-        "--images-path",
+        "--palette-images",
+        default=False,
+        type=bool,
+        help="If the Palette preview files (`palette.svg` and `palette.png` "
+             "should be generated. The preview files will be generated following the "
+             "path provided through the `--palette-images-path` argument."
+    )
+    parser.add_argument(
+        "--palette-images-path",
         default=IMAGES_PATH,
         type=str,
-        help="Path were documentation images are located.",
+        help="Path where palette preview images (`palette.svg` and `palette.png`) "
+             "will be located.",
     )
     parser.add_argument(
         "--resource-prefix",
         default="qdarkstyle",
         type=str,
-        help="Prefix used to this style.",
+        help="Prefix used for this style.",
     )
     parser.add_argument(
         "--style-prefix",
@@ -179,7 +188,8 @@ def main():
             ),
             compile_for=args.create,
             base_svg_path=args.base_svg_path,
-            images_path=args.images_path,
+            palette_images=args.palette_images,
+            palette_images_path=args.palette_images_path,
             base_path=args.base_path,
         )
     elif args.custom_palette_file and args.custom_palette_class_name:
@@ -193,7 +203,8 @@ def main():
             palette=custom_palette_class,
             compile_for=args.create,
             base_svg_path=args.base_svg_path,
-            images_path=args.images_path,
+            palette_images=args.palette_images,
+            palette_images_path=args.palette_images_path,
             base_path=args.base_path,
         )
     else:
@@ -202,7 +213,8 @@ def main():
                 palette=palette,
                 compile_for=args.create,
                 base_svg_path=args.base_svg_path,
-                images_path=args.images_path,
+                palette_images=args.palette_images,
+                palette_images_path=args.palette_images_path,
                 base_path=args.base_path,
             )
 
