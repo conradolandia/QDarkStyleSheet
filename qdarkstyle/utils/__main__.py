@@ -130,14 +130,14 @@ def main():
         type=str,
         help="Path to a Python file with a custom Palette subclass "
         "definition. It needs to be used alongside "
-        "`--custom_palette_class_name` to work.",
+        "`--custom-palette-class-name` to work.",
     )
     parser.add_argument(
         "--custom-palette-class-name",
         type=str,
         help="Importable class name from a given Python file with a custom "
         "palette subclass definition. It needs to be used alongside "
-        "`--custom_palette_file` to work.",
+        "`--custom-palette-file` to work.",
     )
     parser.add_argument(
         "--create",
@@ -157,7 +157,11 @@ def main():
         help="Choose which one would be generated.",
     )
     parser.add_argument(
-        "--watch", "-w", action="store_true", help="Watch for file changes."
+        "--watch",
+        "-w",
+        action="store_true",
+        help="Watch for `palette.py` changes (currently only supports bundled "
+             "`DarkPalette` and `LightPalette` changes)."
     )
 
     args = parser.parse_args()
