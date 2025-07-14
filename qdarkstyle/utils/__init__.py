@@ -60,14 +60,14 @@ def process_palette(
             Defaults to `SVG_PATH`.
         base_path (str): Base path for the palette directory, required for
             custom palettes. Defaults to `PACKAGE_PATH`.
-        palette_images (bool): If the preview palette images should be generated
-            or not. Default False. See `palette_images_path` to set the path
-            were files will be created.
+        palette_images (bool): Whether the preview palette images should be
+            generated. Default is False. See `palette_images_path` to set the
+            path where files will be created.
         palette_images_path (str): Path to save generated image files
             (`palette.svg` and `palette.png`). Defaults to `IMAGES_PATH`.
         resource_prefix (str, optional): Prefix used in resources.
             Defaults to 'qss_icons'.
-        style_prefix (str, optional): Prefix used to this style.
+        style_prefix (str, optional): Prefix used for this style.
             Defaults to 'qdarkstyle'.
     """
 
@@ -100,7 +100,9 @@ def process_palette(
         with open(palette_file_path, mode="w") as palette_file:
             palette_file.write("from qdarkstyle.palette import Palette\n\n\n")
             palette_file.write(f"class {palette.__name__}(Palette):\n")
-            palette_file.write(f'    """{palette.__name__} palette variables."""\n\n')
+            palette_file.write(
+                f'    """{palette.__name__} palette variables."""\n\n'
+            )
             for attr, value in palette.to_dict().items():
                 if attr in ["ID", "OPACITY_TOOLTIP"]:
                     palette_file.write(f"    {attr} = {value}\n")
@@ -135,7 +137,9 @@ def process_palette(
     if palette_images:
         _logger.info(f"-- GENERATING PALETTE IMAGE FOR: {id_}")
         create_palette_image(
-            palette=palette, base_svg_path=base_svg_path, path=palette_images_path
+            palette=palette,
+            base_svg_path=base_svg_path,
+            path=palette_images_path,
         )
 
     _logger.info(f"-- GENERATING IMAGE FILES (.svg > .png) FOR: {id_}")
@@ -154,7 +158,9 @@ def process_palette(
     _logger.info(f"-- GENERATING QSS FILE (.scss > .qss) FOR: {id_}")
     create_qss(palette=palette, base_path=base_path)
 
-    _logger.info(f"-- CONVERTING RESOURCE FILE (. qrc > _rc.py/.rcc) FOR: {id_}")
+    _logger.info(
+        f"-- CONVERTING RESOURCE FILE (. qrc > _rc.py/.rcc) FOR: {id_}"
+    )
     compile_qrc_file(
         compile_for=compile_for,
         palette=palette,

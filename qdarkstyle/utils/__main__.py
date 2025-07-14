@@ -69,7 +69,10 @@ class CustomPaletteParser(argparse.Action):
 
 
 def import_from_file(module_name, file_path):
-    # Taken from: https://gist.github.com/mportesdev/afb2ec26021ccabee0f67d6f7d18be3f
+    """
+    Taken from: https://gist.github.com/mportesdev/
+    afb2ec26021ccabee0f67d6f7d18be3f
+    """
     spec = importlib.util.spec_from_file_location(module_name, file_path)
     module = importlib.util.module_from_spec(spec)
     sys.modules[module_name] = module
@@ -87,7 +90,7 @@ def main():
         "--base-path",
         default=PACKAGE_PATH,
         type=str,
-        help="Base directory where palette assest will be generated.",
+        help="Base directory where palette assets will be generated.",
     )
     parser.add_argument(
         "--base-svg-path",
@@ -99,16 +102,16 @@ def main():
         "--palette-images",
         default=False,
         type=bool,
-        help="If the Palette preview files (`palette.svg` and `palette.png` "
-             "should be generated. The preview files will be generated following the "
-             "path provided through the `--palette-images-path` argument."
+        help="Whether the palette preview files (`palette.svg` and "
+        "`palette.png`) should be generated. They will be generated in "
+        "the path provided through the `--palette-images-path` argument."
     )
     parser.add_argument(
         "--palette-images-path",
         default=IMAGES_PATH,
         type=str,
-        help="Path where palette preview images (`palette.svg` and `palette.png`) "
-             "will be located.",
+        help="Path where palette preview images (`palette.svg` and "
+        "`palette.png`) will be located.",
     )
     parser.add_argument(
         "--resource-prefix",
@@ -123,28 +126,18 @@ def main():
         help="Prefix used in resources.",
     )
     parser.add_argument(
-        "--custom-palette-key-value",
-        nargs="*",
-        action=CustomPaletteParser,
-        help="List of `key=value` definitions for a custom palette. "
-             "Alternative to `--custom_palette_file` + "
-             "`--custom_palette_class_name` args.",
-    )
-    parser.add_argument(
         "--custom-palette-file",
         type=str,
-        help="Path to a Python file with the custom Palette subclass "
-             "definition. Alternative to `--custom_palette_key_value` arg. "
-             "Needs to be used alongside `--custom_palette_class_name` "
-             "to work.",
+        help="Path to a Python file with a custom Palette subclass "
+        "definition. It needs to be used alongside "
+        "`--custom_palette_class_name` to work.",
     )
     parser.add_argument(
         "--custom-palette-class-name",
         type=str,
-        help="Class name importable from the given Python file with the custom "
-             "Palette subclass definition. Alternative to "
-             "`--custom_palette_key_value` arg. Needs to be used alongside "
-             "`--custom_palette_file` to work.",
+        help="Importable class name from a given Python file with a custom "
+        "palette subclass definition. It needs to be used alongside "
+        "`--custom_palette_file` to work.",
     )
     parser.add_argument(
         "--create",
@@ -180,18 +173,6 @@ def main():
         except KeyboardInterrupt:
             observer.stop()
         observer.join()
-    elif args.custom_palette_key_value:
-        process_palette(
-            palette=Palette.from_dict(
-                args.custom_palette,
-                class_name=f'{args.custom_palette["ID"].capitalize()}Palette',
-            ),
-            compile_for=args.create,
-            base_svg_path=args.base_svg_path,
-            palette_images=args.palette_images,
-            palette_images_path=args.palette_images_path,
-            base_path=args.base_path,
-        )
     elif args.custom_palette_file and args.custom_palette_class_name:
         custom_palette_module = import_from_file(
             "palette", args.custom_palette_file,
