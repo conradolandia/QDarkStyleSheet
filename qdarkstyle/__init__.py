@@ -1,12 +1,22 @@
 # -*- coding: utf-8 -*-
 
-"""The most complete dark/light style sheet for Qt applications (Qt4, Qt5,
-PySide, PySide2, PyQt4, PySide6, PyQt5, PyQt6, QtPy, PyQtGraph, Qt.Py) for
-Python 2/3 and C++.
+"""The most complete dark/light style sheet for Qt applications (Qt5, Qt6)
+supporting Python and C++.
 
-Python 2, as well as Qt4 (PyQt4 and PySide), will not be supported anymore.
-They are still there as it is, but no back-compatibility, fixes, nor features
-will be implemented.
+**Requirements:**
+- Python 3.6 or higher (for Python usage)
+- Qt5 or Qt6
+
+**Supported Python Qt bindings:**
+- PyQt5, PyQt6 (recommended)
+- PySide2, PySide6 (recommended)
+- QtPy (abstraction layer)
+- PyQtGraph, Qt.Py (abstraction layers)
+
+**C++ usage:** Use the generated .qss files directly in your Qt C++ applications.
+
+**Note:** Python 2 and Qt4 (PyQt4, PySide) are no longer supported.
+For legacy support, use QDarkStyle version 2.8.1 or earlier.
 
 
 Check the `documentation <https://qdarkstylesheet.readthedocs.io/en/stable>`__
@@ -45,6 +55,25 @@ Alternatively, from environment variables provided by QtPy, PyQtGraph, Qt.Py
     dark_stylesheet = qdarkstyle.load_stylesheet(qt_api=os.environ('PYQTGRAPH_QT_LIB'))
     # Qt.Py
     dark_stylesheet = qdarkstyle.load_stylesheet(qt_api=Qt.__binding__)
+
+**Using different palettes (Recommended)**
+
+You can also specify which palette to use (dark or light theme):
+
+.. code-block:: python
+
+    # Import the palettes
+    from qdarkstyle.dark.palette import DarkPalette
+    from qdarkstyle.light.palette import LightPalette
+
+    # Load dark theme
+    dark_stylesheet = qdarkstyle.load_stylesheet(palette=DarkPalette)
+    
+    # Load light theme
+    light_stylesheet = qdarkstyle.load_stylesheet(palette=LightPalette)
+
+    # You can also combine with qt_api
+    stylesheet = qdarkstyle.load_stylesheet(qt_api='pyside6', palette=DarkPalette)
 
 Finally, set your QApplication with it
 
@@ -296,19 +325,40 @@ def load_stylesheet(*args, **kwargs):
     Load the stylesheet. Takes care of importing the rc module.
 
     Args:
-        pyside (bool): True to load the PySide (or PySide2) rc file,
+        pyside (bool): **[DEPRECATED]** True to load the PySide (or PySide2) rc file,
                        False to load the PyQt4 (or PyQt5) rc file.
-                       Default is False.
+                       Default is False. Use qt_api parameter instead.
         or
 
         qt_api (str): Qt binding name to set QT_API environment variable.
                       Default is '', i.e PyQt5 the default QtPy binding.
-                      Possible values are pyside, pyside2 pyqt4, pyqt5.
+                      Possible values are pyside, pyside2, pyside6, pyqt4, pyqt5, pyqt6.
                       Not case sensitive.
 
         or
 
-        palette (Palette): Class (not instance) that inherits from Palette.
+        palette (Palette): **[RECOMMENDED]** Palette class (not instance) that inherits from Palette.
+                          Available palettes:
+                          - DarkPalette: Dark theme (default)
+                          - LightPalette: Light theme
+                          - Custom palettes: Create your own by inheriting from Palette
+
+    Examples:
+        Load with default dark theme:
+        
+        >>> import qdarkstyle
+        >>> stylesheet = qdarkstyle.load_stylesheet()
+        
+        Load with specific palette:
+        
+        >>> from qdarkstyle.dark.palette import DarkPalette
+        >>> from qdarkstyle.light.palette import LightPalette
+        >>> dark_stylesheet = qdarkstyle.load_stylesheet(palette=DarkPalette)
+        >>> light_stylesheet = qdarkstyle.load_stylesheet(palette=LightPalette)
+        
+        Combine with Qt API:
+        
+        >>> stylesheet = qdarkstyle.load_stylesheet(qt_api='pyside6', palette=DarkPalette)
 
     Raises:
         TypeError: If arguments do not match: type, keyword name nor quantity.
