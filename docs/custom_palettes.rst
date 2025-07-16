@@ -72,12 +72,14 @@ Every custom palette must define these properties:
 Using Custom Color Systems
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-You can create your own color system or use the built-in one:
+**Option 1: Using Built-in Color Systems**
+
+You can mix custom hex colors with the built-in color systems:
 
 .. code-block:: python
 
     from qdarkstyle.palette import Palette
-    from qdarkstyle.colorsystem import Gray, Blue, Green
+    from qdarkstyle.colorsystem import Gray, Blue
 
     class ForestTheme(Palette):
         """Forest-inspired theme with custom and built-in colors."""
@@ -89,8 +91,8 @@ You can create your own color system or use the built-in one:
         COLOR_BACKGROUND_2 = '#2d4a2d'      # Custom medium green
         COLOR_BACKGROUND_3 = Gray.B30        # Built-in gray
         COLOR_BACKGROUND_4 = Gray.B40        # Built-in gray
-        COLOR_BACKGROUND_5 = Green.B50       # Built-in green
-        COLOR_BACKGROUND_6 = Green.B60       # Built-in green
+        COLOR_BACKGROUND_5 = Gray.B50        # Built-in gray
+        COLOR_BACKGROUND_6 = Gray.B60        # Built-in gray
         
         # Use built-in colors for consistency
         COLOR_TEXT_1 = Gray.B150
@@ -107,6 +109,100 @@ You can create your own color system or use the built-in one:
         
         COLOR_DISABLED = Gray.B70
         OPACITY_TOOLTIP = 230
+
+**Option 2: Creating Fully Custom Color Systems**
+
+For complete control over all colors, you can create your own color system classes:
+
+.. code-block:: python
+
+    # custom_colors.py - Define your own color system
+    class WarmColors:
+        """Warm color palette system."""
+        # Reds and oranges
+        RED_DARK = '#8B0000'      # Dark red
+        RED_MEDIUM = '#DC143C'    # Crimson
+        RED_LIGHT = '#FF6347'     # Tomato
+        
+        ORANGE_DARK = '#FF4500'   # Orange red
+        ORANGE_MEDIUM = '#FF8C00' # Dark orange
+        ORANGE_LIGHT = '#FFA500'  # Orange
+        
+        # Yellows and warm neutrals
+        YELLOW_DARK = '#DAA520'   # Goldenrod
+        YELLOW_MEDIUM = '#FFD700' # Gold
+        YELLOW_LIGHT = '#FFFF99' # Light yellow
+        
+        WARM_GRAY_1 = '#2F2F2F'   # Very dark gray
+        WARM_GRAY_2 = '#4A4A4A'   # Dark gray
+        WARM_GRAY_3 = '#6B6B6B'   # Medium gray
+        WARM_GRAY_4 = '#8C8C8C'   # Light gray
+        WARM_GRAY_5 = '#ADADAD'   # Very light gray
+        
+    class CoolColors:
+        """Cool color palette system."""
+        # Blues and greens
+        BLUE_DARK = '#191970'     # Midnight blue
+        BLUE_MEDIUM = '#4169E1'   # Royal blue
+        BLUE_LIGHT = '#87CEEB'    # Sky blue
+        
+        GREEN_DARK = '#006400'    # Dark green
+        GREEN_MEDIUM = '#228B22'  # Forest green
+        GREEN_LIGHT = '#90EE90'   # Light green
+        
+        # Purples and cool neutrals
+        PURPLE_DARK = '#4B0082'   # Indigo
+        PURPLE_MEDIUM = '#8A2BE2' # Blue violet
+        PURPLE_LIGHT = '#DDA0DD'  # Plum
+        
+        COOL_GRAY_1 = '#2E3440'   # Dark cool gray
+        COOL_GRAY_2 = '#3B4252'   # Medium dark gray
+        COOL_GRAY_3 = '#434C5E'   # Medium gray
+        COOL_GRAY_4 = '#4C566A'   # Light gray
+        COOL_GRAY_5 = '#5E81AC'   # Very light gray
+
+Now use your custom color systems in your palette:
+
+.. code-block:: python
+
+    from qdarkstyle.palette import Palette
+    from custom_colors import WarmColors, CoolColors
+
+    class SunsetTheme(Palette):
+        """Warm sunset-inspired theme using custom color system."""
+        
+        ID = 'sunset'
+        
+        # Use your custom warm colors
+        COLOR_BACKGROUND_1 = WarmColors.WARM_GRAY_1    # Very dark background
+        COLOR_BACKGROUND_2 = WarmColors.WARM_GRAY_2    # Dark background
+        COLOR_BACKGROUND_3 = WarmColors.WARM_GRAY_3    # Medium background
+        COLOR_BACKGROUND_4 = WarmColors.RED_DARK       # Dark red for raised elements
+        COLOR_BACKGROUND_5 = WarmColors.ORANGE_DARK    # Orange for pressed elements
+        COLOR_BACKGROUND_6 = WarmColors.ORANGE_MEDIUM  # Bright orange for hover
+        
+        # Warm text colors
+        COLOR_TEXT_1 = WarmColors.YELLOW_LIGHT         # Primary text
+        COLOR_TEXT_2 = WarmColors.YELLOW_MEDIUM        # Secondary text
+        COLOR_TEXT_3 = WarmColors.ORANGE_LIGHT         # Tertiary text
+        COLOR_TEXT_4 = WarmColors.WARM_GRAY_5          # Quaternary text
+        
+        # Warm accent colors
+        COLOR_ACCENT_1 = WarmColors.RED_LIGHT          # Bright accent
+        COLOR_ACCENT_2 = WarmColors.RED_MEDIUM         # Medium accent
+        COLOR_ACCENT_3 = WarmColors.RED_DARK           # Dark accent
+        COLOR_ACCENT_4 = WarmColors.ORANGE_DARK        # Darker accent
+        COLOR_ACCENT_5 = WarmColors.WARM_GRAY_4        # Subtle accent
+        
+        COLOR_DISABLED = WarmColors.WARM_GRAY_3
+        OPACITY_TOOLTIP = 230
+
+**Why Use Custom Color Systems?**
+
+- **Consistency**: Ensures all colors work harmoniously together
+- **Maintainability**: Easy to update color schemes across multiple themes
+- **Design System**: Creates a cohesive color language for your application
+- **Flexibility**: Mix and match color systems for different themes
 
 Complete Workflow
 -----------------
@@ -153,6 +249,12 @@ Create a Python file with your custom palette:
 2. Generate Theme Resources
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+.. important::
+   **CRITICAL REQUIREMENT**: You MUST generate theme resources before using any custom palette. This process creates the necessary QSS stylesheets, PNG icons, and resource files with your custom colors. Custom palettes cannot be used without this step.
+
+.. warning::
+   **Asset Generation Required for Custom Color Systems**: When using custom color systems (like the WarmColors/CoolColors example above), the asset generation process will create PNG icons using your custom colors. This ensures that UI elements like checkboxes, arrows, and other icons match your color scheme.
+
 Use the QDarkStyleSheet CLI to generate all necessary files:
 
 .. code-block:: bash
@@ -178,6 +280,29 @@ This creates the complete theme structure:
             ├── arrow_down.png
             ├── checkbox_checked.png
             └── ... (all icons in your colors)
+
+**What Happens During Asset Generation?**
+
+The asset generation process does several critical things:
+
+1. **Creates Colored Icons**: Takes the base SVG icons and generates PNG versions using your palette's colors
+   
+   - ``COLOR_ACCENT_2`` is used for pressed states
+   - ``COLOR_ACCENT_5`` is used for focus states  
+   - ``COLOR_BACKGROUND_4`` is used for disabled states
+   - ``COLOR_TEXT_1`` is used for normal states
+
+2. **Generates QSS Stylesheet**: Compiles SCSS variables with your colors into a complete QSS stylesheet
+
+3. **Creates Resource Files**: Generates Qt resource files (.qrc) and Python resource modules (_rc.py) that bundle all assets
+
+4. **Ensures Color Consistency**: All UI elements (backgrounds, text, icons, borders) use colors from your palette
+
+**Without asset generation, your custom theme will not work** because:
+
+- Icons will not match your color scheme
+- Many UI elements depend on the generated PNG resources
+- The QSS file contains references to generated resources
 
 3. Use Your Custom Theme
 ~~~~~~~~~~~~~~~~~~~~~~~~
