@@ -16,7 +16,7 @@ supporting Python and C++.
 **C++ usage:** Use the generated .qss files directly in your Qt C++ applications.
 
 **Note:** Python 2 and Qt4 (PyQt4, PySide) are no longer supported.
-For legacy support, use QDarkStyle version 2.8.1 or earlier.
+For legacy support, use QDarkStyle version 3.1 or earlier.
 
 
 Check the `documentation <https://qdarkstylesheet.readthedocs.io/en/stable>`__
