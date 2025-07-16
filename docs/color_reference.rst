@@ -131,12 +131,12 @@ Other Palette Properties
 
 Additional properties that define the visual appearance:
 
-=================== ======================= ======================= =========
-Constant            Value                   Value                   Usage
-=================== ======================= ======================= =========
-OPACITY_TOOLTIP     230                     230                     Tooltip opacity
-SIZE_BORDER_RADIUS  4px                     4px                     Border radius
-=================== ======================= ======================= =========
+=================== ======================= =========
+Constant            Value                   Usage
+=================== ======================= =========
+OPACITY_TOOLTIP     230                     Tooltip opacity
+SIZE_BORDER_RADIUS  4px                     Border radius
+=================== ======================= =========
 
 Usage Examples
 ~~~~~~~~~~~~~~
