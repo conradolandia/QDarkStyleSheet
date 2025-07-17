@@ -3,6 +3,9 @@ Custom Palettes Guide
 
 This guide explains how to create and use custom palettes with QDarkStyleSheet. Custom palettes allow you to define completely custom color schemes with any theme name and ID.
 
+.. note::
+   Custom palettes require a different workflow than built-in themes and cannot be used with ``load_stylesheet()``.
+
 Understanding Custom Palettes
 -----------------------------
 
@@ -11,9 +14,13 @@ QDarkStyleSheet supports fully custom palettes with:
 - **Custom ID**: Any string identifier you want (e.g., 'ocean', 'forest', 'neon')
 - **Custom colors**: Complete freedom to define all colors
 - **Custom color system**: Can use built-in colors or define your own
-- **Generated resources**: CLI generates all necessary files (QSS, QRC, PNG icons)
+- **Generated resources**: The qdarkstyle.utils module generates all necessary files (QSS, QRC, PNG icons)
 
-**Important**: Custom palettes use a different workflow than the built-in dark/light themes. You cannot use `qdarkstyle.load_stylesheet()` with custom palettes. Instead, you use the generated QSS file directly.
+.. warning::
+   **CRITICAL LIMITATION**: Custom palettes cannot be used with ``qdarkstyle.load_stylesheet()``. 
+   This function only supports the built-in ``DarkPalette`` and ``LightPalette`` classes.
+   
+   Custom palettes must be loaded by reading the generated QSS file directly.
 
 Creating a Custom Palette
 -------------------------
@@ -255,7 +262,7 @@ Create a Python file with your custom palette:
 .. warning::
    **Asset Generation Required for Custom Color Systems**: When using custom color systems (like the WarmColors/CoolColors example above), the asset generation process will create PNG icons using your custom colors. This ensures that UI elements like checkboxes, arrows, and other icons match your color scheme.
 
-Use the QDarkStyleSheet CLI to generate all necessary files:
+Use the qdarkstyle.utils module to generate all necessary files:
 
 .. code-block:: bash
 
@@ -263,6 +270,20 @@ Use the QDarkStyleSheet CLI to generate all necessary files:
         --custom-palette-file my_theme.py \
         --custom-palette-class-name NeonTheme \
         --base-path ./my_themes
+
+.. note::
+   The command-line interface is provided by the ``qdarkstyle.utils`` module. This is the same tool used internally by QDarkStyleSheet for generating built-in themes.
+
+**Available CLI Options:**
+
+- ``--custom-palette-file``: Path to your Python file containing the palette class
+- ``--custom-palette-class-name``: Name of your palette class (must match exactly)
+- ``--base-path``: Directory where theme assets will be generated (default: package directory)
+- ``--create``: Qt binding to compile for (default: qtpy, options: pyqt5, pyqt6, pyside2, pyside6, all)
+- ``--palette-images``: Generate preview palette images (default: False)
+- ``--palette-images-path``: Path for preview images (default: docs/images)
+- ``--resource-prefix``: Resource prefix for icons (default: qss_icons)
+- ``--style-prefix``: Style prefix for QSS files (default: qdarkstyle)
 
 This creates the complete theme structure:
 
@@ -307,7 +328,9 @@ The asset generation process does several critical things:
 3. Use Your Custom Theme
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-**Method 1: Load QSS file directly**
+Custom themes **cannot** be used with ``qdarkstyle.load_stylesheet()``. Instead, use one of these methods:
+
+**Method 1: Load QSS file directly (Recommended)**
 
 .. code-block:: python
 
@@ -345,7 +368,7 @@ The asset generation process does several critical things:
     app = QApplication(sys.argv)
     
     # Load stylesheet from resources
-    qss_file = QFile(":/qdarkstyle/neon/neonstyle.qss")
+    qss_file = QFile(":/qss_icons/neon/neonstyle.qss")
     qss_file.open(QFile.ReadOnly | QFile.Text)
     stream = QTextStream(qss_file)
     stylesheet = stream.readAll()
@@ -358,165 +381,7 @@ The asset generation process does several critical things:
     
     app.exec_()
 
-Advanced Examples
-----------------
 
-Multiple Theme Variants
-~~~~~~~~~~~~~~~~~~~~~~~
-
-You can create multiple variants of the same theme:
-
-.. code-block:: python
-
-    class RetroBlue(Palette):
-        ID = 'retro_blue'
-        # ... blue-themed colors
-        
-    class RetroGreen(Palette):
-        ID = 'retro_green'
-        # ... green-themed colors
-        
-    class RetroRed(Palette):
-        ID = 'retro_red'
-        # ... red-themed colors
-
-Dynamic Theme Switching
-~~~~~~~~~~~~~~~~~~~~~~
-
-.. code-block:: python
-
-    class ThemeManager:
-        def __init__(self, app):
-            self.app = app
-            self.themes = {
-                'ocean': './themes/ocean/oceanstyle.qss',
-                'forest': './themes/forest/foreststyle.qss',
-                'neon': './themes/neon/neonstyle.qss',
-            }
-        
-        def apply_theme(self, theme_name):
-            if theme_name in self.themes:
-                with open(self.themes[theme_name], 'r') as f:
-                    stylesheet = f.read()
-                self.app.setStyleSheet(stylesheet)
-
-High Contrast Accessibility Theme
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. code-block:: python
-
-    class AccessibilityTheme(Palette):
-        """High contrast theme for accessibility."""
-        
-        ID = 'accessibility'
-        
-        # Maximum contrast colors
-        COLOR_BACKGROUND_1 = '#000000'  # Pure black
-        COLOR_BACKGROUND_2 = '#1a1a1a'  # Very dark
-        COLOR_BACKGROUND_3 = '#333333'  # Dark
-        COLOR_BACKGROUND_4 = '#4d4d4d'  # Medium
-        COLOR_BACKGROUND_5 = '#666666'  # Light
-        COLOR_BACKGROUND_6 = '#808080'  # Lighter
-        
-        # High contrast text
-        COLOR_TEXT_1 = '#ffffff'        # Pure white
-        COLOR_TEXT_2 = '#f0f0f0'        # Almost white
-        COLOR_TEXT_3 = '#e0e0e0'        # Light
-        COLOR_TEXT_4 = '#d0d0d0'        # Medium light
-        
-        # Bright, distinguishable accents
-        COLOR_ACCENT_1 = '#ffff00'      # Bright yellow
-        COLOR_ACCENT_2 = '#ffcc00'      # Orange-yellow
-        COLOR_ACCENT_3 = '#ff9900'      # Orange
-        COLOR_ACCENT_4 = '#ff6600'      # Red-orange
-        COLOR_ACCENT_5 = '#ff3300'      # Red
-        
-        COLOR_DISABLED = '#666666'
-        OPACITY_TOOLTIP = 255
-
-Testing Your Custom Theme
--------------------------
-
-Complete Test Application
-~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. code-block:: python
-
-    import sys
-    from PyQt5.QtWidgets import (QApplication, QMainWindow, QVBoxLayout, 
-                                QWidget, QPushButton, QLabel, QLineEdit, 
-                                QCheckBox, QSlider, QProgressBar, QComboBox,
-                                QTextEdit, QTabWidget, QGroupBox, QTableWidget,
-                                QTableWidgetItem, QRadioButton, QSpinBox)
-    from PyQt5.QtCore import Qt
-
-    class CustomThemeTestWindow(QMainWindow):
-        def __init__(self):
-            super().__init__()
-            self.setWindowTitle("Custom Theme Test")
-            self.setGeometry(100, 100, 800, 600)
-            
-            central_widget = QWidget()
-            self.setCentralWidget(central_widget)
-            main_layout = QVBoxLayout(central_widget)
-            
-            # Test all widget types
-            self.create_test_widgets(main_layout)
-        
-        def create_test_widgets(self, layout):
-            # Basic widgets
-            basic_group = QGroupBox("Basic Widgets")
-            basic_layout = QVBoxLayout(basic_group)
-            basic_layout.addWidget(QLabel("Test Label"))
-            basic_layout.addWidget(QPushButton("Test Button"))
-            basic_layout.addWidget(QCheckBox("Test Checkbox"))
-            basic_layout.addWidget(QRadioButton("Test Radio"))
-            layout.addWidget(basic_group)
-            
-            # Input widgets
-            input_group = QGroupBox("Input Widgets")
-            input_layout = QVBoxLayout(input_group)
-            input_layout.addWidget(QLineEdit("Test Input"))
-            input_layout.addWidget(QSpinBox())
-            combo = QComboBox()
-            combo.addItems(["Option 1", "Option 2", "Option 3"])
-            input_layout.addWidget(combo)
-            layout.addWidget(input_group)
-            
-            # Display widgets
-            display_group = QGroupBox("Display Widgets")
-            display_layout = QVBoxLayout(display_group)
-            slider = QSlider(Qt.Horizontal)
-            slider.setValue(50)
-            display_layout.addWidget(slider)
-            progress = QProgressBar()
-            progress.setValue(75)
-            display_layout.addWidget(progress)
-            text_edit = QTextEdit("Multi-line text\\nSecond line\\nThird line")
-            text_edit.setMaximumHeight(80)
-            display_layout.addWidget(text_edit)
-            layout.addWidget(display_group)
-
-    def test_custom_theme(qss_file_path):
-        app = QApplication(sys.argv)
-        
-        # Load custom theme
-        with open(qss_file_path, 'r') as f:
-            stylesheet = f.read()
-        app.setStyleSheet(stylesheet)
-        
-        window = CustomThemeTestWindow()
-        window.show()
-        
-        return app.exec_()
-
-    if __name__ == '__main__':
-        # Test your custom theme
-        theme_file = './my_themes/neon/neonstyle.qss'
-        sys.exit(test_custom_theme(theme_file))
-
-Best Practices
--------------
 
 Color Selection Guidelines
 ~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -577,7 +442,7 @@ Common Issues
 Resources
 ---------
 
-- **CLI Reference**: See :doc:`scripts/run_ui_css_edition` for command-line options
+- **CLI Reference**: See :doc:`scripts/qdarkstyle_utils` for complete command-line options
 - **Color System**: See :doc:`color_reference` for built-in colors
 - **API Reference**: See :doc:`reference/modules` for palette class details
 

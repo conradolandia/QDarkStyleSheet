@@ -338,10 +338,12 @@ def load_stylesheet(*args, **kwargs):
         or
 
         palette (Palette): **[RECOMMENDED]** Palette class (not instance) that inherits from Palette.
-                          Available palettes:
+                          **SUPPORTED PALETTES ONLY:**
                           - DarkPalette: Dark theme (default)
                           - LightPalette: Light theme
-                          - Custom palettes: Create your own by inheriting from Palette
+                          
+                          **CUSTOM PALETTES ARE NOT SUPPORTED**
+                          Custom palettes must use generated QSS files directly.
 
     Examples:
         Load with default dark theme:
@@ -359,6 +361,11 @@ def load_stylesheet(*args, **kwargs):
         Combine with Qt API:
         
         >>> stylesheet = qdarkstyle.load_stylesheet(qt_api='pyside6', palette=DarkPalette)
+
+    Note:
+        This function only works with built-in DarkPalette and LightPalette.
+        For custom palettes, load the generated QSS file directly with
+        app.setStyleSheet(qss_content).
 
     Raises:
         TypeError: If arguments do not match: type, keyword name nor quantity.
