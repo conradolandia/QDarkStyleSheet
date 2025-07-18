@@ -3,8 +3,6 @@ Custom Palettes Guide
 
 This guide explains how to create and use custom palettes with QDarkStyleSheet. Custom palettes allow you to define completely custom color schemes with any theme name and ID.
 
-.. note::
-   Custom palettes require a different workflow than built-in themes and cannot be used with ``load_stylesheet()``.
 
 Understanding Custom Palettes
 -----------------------------
@@ -17,7 +15,7 @@ QDarkStyleSheet supports fully custom palettes with:
 - **Generated resources**: The qdarkstyle.utils module generates all necessary files (QSS, QRC, PNG icons)
 
 .. warning::
-   **CRITICAL LIMITATION**: Custom palettes cannot be used with ``qdarkstyle.load_stylesheet()``. 
+   Custom palettes cannot be used with ``qdarkstyle.load_stylesheet()``. 
    This function only supports the built-in ``DarkPalette`` and ``LightPalette`` classes.
    
    Custom palettes must be loaded by reading the generated QSS file directly.
@@ -330,7 +328,7 @@ The asset generation process does several critical things:
 
 Custom themes **cannot** be used with ``qdarkstyle.load_stylesheet()``. Instead, use one of these methods:
 
-**Method 1: Load QSS file directly (Recommended)**
+**Method 1: Load QSS file directly**
 
 .. code-block:: python
 
