@@ -18,6 +18,8 @@ QDarkStyleSheet supports fully custom palettes with:
    Custom palettes cannot be used with ``qdarkstyle.load_stylesheet()``. 
    This function only supports the built-in ``DarkPalette`` and ``LightPalette`` classes.
    
+   The function explicitly validates palette IDs and will exit with an error if you pass a custom palette with any ID other than 'dark' or 'light'.
+   
    Custom palettes must be loaded by reading the generated QSS file directly.
 
 Creating a Custom Palette
@@ -413,13 +415,18 @@ Important Notes
 Limitations and Considerations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-**Cannot use with load_stylesheet()**: Custom palettes cannot be used with ``qdarkstyle.load_stylesheet()``. This function only works with the built-in DarkPalette and LightPalette.
+**Cannot use with load_stylesheet()**: Custom palettes cannot be used with ``qdarkstyle.load_stylesheet()``. This function only works with the built-in DarkPalette and LightPalette. The function explicitly validates palette IDs and will exit with an error if you pass a custom palette with any ID other than 'dark' or 'light'.
 
 **Resource Management**: Generated themes include resource files that must be properly imported if using Method 2.
 
 **Path Management**: Ensure proper path handling when loading QSS files in different environments.
 
 **Qt Binding Compatibility**: Generated resource files work with all Qt bindings (PyQt5, PyQt6, PySide2, PySide6).
+
+Technical Details
+~~~~~~~~~~~~~~~~~
+
+**Why load_stylesheet() doesn't support custom palettes**: The function validates palette IDs and only accepts 'dark' or 'light'. This is because the function needs to import the correct resource modules (darkstyle_rc or lightstyle_rc) that contain the compiled QSS and icon resources. Custom palettes don't have these pre-compiled resources available in the package, so they must be generated separately and loaded directly.
 
 Troubleshooting
 --------------
