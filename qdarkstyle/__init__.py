@@ -15,12 +15,17 @@ supporting Python and C++.
 
 **C++ usage:** Use the generated .qss files directly in your Qt C++ applications.
 
+**Features:**
+- Built-in dark and light themes
+- Custom palette creation with asset generation
+- Cross-platform Qt binding compatibility
+
 **Note:** Python 2 and Qt4 (PyQt4, PySide) are no longer supported.
 For legacy support, use QDarkStyle version 3.1 or earlier.
 
 
 Check the `documentation <https://qdarkstylesheet.readthedocs.io/en/stable>`__
-to see how to set the desirable theme palette.
+to see how to set the desirable theme palette and create custom palettes.
 
 This module provides a function to load the stylesheets transparently
 with the right resources file.
@@ -278,6 +283,8 @@ def _load_stylesheet(qt_api='', palette=None):
         palette = LightPalette
     else:
         print("Not recognized ID for palette! Exiting!")
+        print("Only 'dark' and 'light' palette IDs are supported by load_stylesheet().")
+        print("For custom palettes, use the generated QSS files directly.")
         sys.exit(1)
 
     # Thus, by importing the binary we can access the resources

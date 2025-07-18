@@ -410,7 +410,7 @@ File Management
 4. **Backup**: Maintain copies of working themes
 
 Important Notes
----------------
+----------------
 
 Limitations and Considerations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

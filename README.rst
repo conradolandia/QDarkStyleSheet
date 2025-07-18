@@ -4,11 +4,36 @@ QDarkStyleSheet
 |Build Status| |Docs Status| |Latest PyPI version| |License: MIT|
 |License: CC BY 4.0| |Conduct|
 
-The most complete dark/light style sheet for Qt applications (Qt4*, Qt5,
-PySide*, PySide2, PySide6,  PyQt4*, PyQt5, PyQt6, QtPy, PyQtGraph, Qt.Py)
-for Python 2*/3 and C++.
+The most complete dark/light style sheet for Qt applications supporting Python and C++.
+
+QDarkStyleSheet now works as a complete theme framework supporting:
+- Built-in dark and light themes
+- Custom palette creation with full color control
+- Asset generation for custom themes
+- Cross-platform Qt binding compatibility
 
 `Check out the complete documentation. <https://qdarkstylesheet.readthedocs.io/en/latest/screenshots.html>`__
+
+
+Requirements
+------------
+
+**Python Requirements:**
+- Python 3.6 or higher
+
+**Qt Requirements:**
+- Qt5 or Qt6
+
+**Supported Python Qt Bindings:**
+- PyQt5, PyQt6 (recommended)
+- PySide2, PySide6 (recommended)
+- QtPy (abstraction layer)
+- PyQtGraph, Qt.Py (abstraction layers)
+
+**C++ Usage:** Use the generated .qss files directly in your Qt C++ applications.
+
+**Note:** Python 2 and Qt4 (PyQt4, PySide) are no longer supported.
+For legacy support, use QDarkStyle version 3.1 or earlier.
 
 
 What is new?
@@ -26,15 +51,20 @@ The palette has been redefined and improved (UI/UX) to accept more colors
 and to be able to implement new themes thanks to the
 `Spyder team <https://github.com/spyder-ide/spyder>`__ collaboration.
 
-The current stable version is using Python 3 (preferable 3.6+) and Qt5
+**New in Version 3:**
+- Complete custom palette system with asset generation
+- Support for custom color schemes and themes
+- Enhanced palette framework with built-in color systems
+- Improved Qt6 support (PyQt6, PySide6)
+
+The current stable version is using Python 3.6+ and Qt5
 (PyQt5 and PySide 2). Also in this version, an option for Qt6 (PyQt6, PySide6)
 was added.
 
 The current version for use with Qt6 may still present instabilities.
 
-[*] Python 2, as well as Qt4 (PyQt4 and PySide), will not be supported anymore.
-They are still there as it is, but no back compatibility, fixes, nor features
-will be implemented.
+**Note:** Python 2 and Qt4 (PyQt4 and PySide) are no longer supported.
+For legacy support, use QDarkStyle version 3.1 or earlier.
 
 Version 2
 ~~~~~~~~~
@@ -56,7 +86,9 @@ creating SVG files for all of them.
 In version 2.6 and later, a restructure stylesheet is provided. The
 palette has only 9 colors. Most widgets are revised and their styles
 were improved. We also provide a command line (script) to get info that
-could be used when opening issues. See the image below.
+could be used when opening issues.
+
+**Note:** Version 2 supported Python 2 and Python 3. Python 2 support was removed in Version 3.
 
 
 Version 1
@@ -193,6 +225,22 @@ If you are using PyQt5 directly, see the complete example
     window.show()
     app.exec_()
 
+**Using Different Built-in Palettes:**
+
+.. code:: python
+
+    from qdarkstyle.dark.palette import DarkPalette
+    from qdarkstyle.light.palette import LightPalette
+
+    # Load dark theme (default)
+    app.setStyleSheet(qdarkstyle.load_stylesheet(palette=DarkPalette))
+    
+    # Load light theme
+    app.setStyleSheet(qdarkstyle.load_stylesheet(palette=LightPalette))
+    
+    # Combine with Qt API
+    app.setStyleSheet(qdarkstyle.load_stylesheet(qt_api='pyside6', palette=LightPalette))
+
 
 Here is an example using PySide2
 
@@ -245,6 +293,64 @@ If you use PyQtGraph, then the code is
 
 If you are using Qt.py, which is different from qtpy, you should install
 qtpy then set both to the same binding.
+
+
+Using Custom Palettes
+---------------------
+
+QDarkStyleSheet supports creating completely custom color schemes. Custom palettes allow you to define your own color themes with full control over all colors.
+
+**Basic Custom Palette Example:**
+
+.. code:: python
+
+    from qdarkstyle.palette import Palette
+
+    class MyCustomTheme(Palette):
+        ID = 'my_theme'
+        
+        # Define your custom colors
+        COLOR_BACKGROUND_1 = '#1a1a1a'
+        COLOR_BACKGROUND_2 = '#2d2d2d'
+        COLOR_BACKGROUND_3 = '#404040'
+        COLOR_BACKGROUND_4 = '#535353'
+        COLOR_BACKGROUND_5 = '#666666'
+        COLOR_BACKGROUND_6 = '#797979'
+        
+        COLOR_TEXT_1 = '#ffffff'
+        COLOR_TEXT_2 = '#e6e6e6'
+        COLOR_TEXT_3 = '#cccccc'
+        COLOR_TEXT_4 = '#b3b3b3'
+        
+        COLOR_ACCENT_1 = '#ff6b6b'
+        COLOR_ACCENT_2 = '#ff5252'
+        COLOR_ACCENT_3 = '#ff3838'
+        COLOR_ACCENT_4 = '#ff1f1f'
+        COLOR_ACCENT_5 = '#ff0505'
+        
+        COLOR_DISABLED = '#666666'
+        OPACITY_TOOLTIP = 230
+
+**Generate and Use Custom Theme:**
+
+.. code:: bash
+
+    # Generate theme assets
+    python -m qdarkstyle.utils \
+        --custom-palette-file my_theme.py \
+        --custom-palette-class-name MyCustomTheme \
+        --base-path ./my_themes
+
+    # Use in your application
+    with open('./my_themes/my_theme/my_themestyle.qss', 'r') as f:
+        stylesheet = f.read()
+    app.setStyleSheet(stylesheet)
+
+.. note::
+   Custom palettes cannot be used with ``qdarkstyle.load_stylesheet()``. 
+   They must be generated and loaded directly from QSS files.
+
+For complete custom palette documentation, see the `Custom Palettes Guide <https://qdarkstylesheet.readthedocs.io/en/latest/custom_palettes.html>`__.
 
 
 Usage of example/portfolio
