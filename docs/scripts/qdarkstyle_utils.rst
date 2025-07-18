@@ -1,7 +1,7 @@
 QDarkStyle Utils CLI
 ====================
 
-Command-line interface for processing QRC files, generating stylesheets, and creating custom palettes.
+Command-line interface for processing palette class definitions, generating stylesheets and other palette assets, with support for custom palettes.
 
 Usage
 -----
@@ -10,7 +10,7 @@ Usage
 
     python -m qdarkstyle.utils [OPTIONS]
 
-The tool converts ``.qrc`` files to ``_rc.py`` and ``.rcc`` files, generates images from SVG sources, and compiles SCSS to QSS stylesheets.
+The tool generates ``.qrc`` files,  ``_rc.py`` and ``.rcc`` files, generates images from SVG sources, and compiles SCSS to QSS stylesheets.
 
 Basic Examples
 --------------

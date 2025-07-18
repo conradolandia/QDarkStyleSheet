@@ -215,7 +215,7 @@ Complete Workflow
 -----------------
 
 1. Create Your Palette File
-~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Create a Python file with your custom palette:
 
@@ -384,7 +384,7 @@ Custom themes **cannot** be used with ``qdarkstyle.load_stylesheet()``. Instead,
 
 
 Color Selection Guidelines
-~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 1. **Background Hierarchy**: Use COLOR_BACKGROUND_1 for main areas, higher numbers for elevated surfaces
 2. **Text Contrast**: Ensure sufficient contrast between text and background colors
@@ -393,7 +393,7 @@ Color Selection Guidelines
 5. **System Colors**: Consider using built-in color constants for consistency
 
 Theme Development Workflow
-~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 1. **Design Phase**: Plan your color scheme with design tools
 2. **Prototype**: Create palette class and generate initial theme
@@ -402,7 +402,7 @@ Theme Development Workflow
 5. **Validate**: Check accessibility and usability
 
 File Management
-~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~
 
 1. **Organization**: Keep themes in separate directories
 2. **Version Control**: Track palette files and generated resources
@@ -410,10 +410,10 @@ File Management
 4. **Backup**: Maintain copies of working themes
 
 Important Notes
---------------
+---------------
 
 Limitations and Considerations
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 **Cannot use with load_stylesheet()**: Custom palettes cannot be used with ``qdarkstyle.load_stylesheet()``. This function only works with the built-in DarkPalette and LightPalette. The function explicitly validates palette IDs and will exit with an error if you pass a custom palette with any ID other than 'dark' or 'light'.
 
@@ -429,10 +429,10 @@ Technical Details
 **Why load_stylesheet() doesn't support custom palettes**: The function validates palette IDs and only accepts 'dark' or 'light'. This is because the function needs to import the correct resource modules (darkstyle_rc or lightstyle_rc) that contain the compiled QSS and icon resources. Custom palettes don't have these pre-compiled resources available in the package, so they must be generated separately and loaded directly.
 
 Troubleshooting
---------------
+---------------
 
 Common Issues
-~~~~~~~~~~~~
+~~~~~~~~~~~~~
 
 **Theme not loading**: Verify the QSS file path is correct and accessible.
 
