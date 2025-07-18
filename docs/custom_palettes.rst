@@ -1,26 +1,27 @@
 Custom Palettes Guide
 =====================
 
-This guide explains how to create and use custom palettes with QDarkStyleSheet. Custom palettes allow you to define completely custom color schemes with any theme name and ID.
+This guide explains how to create and use custom palettes with QDarkStyleSheet. Custom palettes allow you to define completely custom color schemes while following the established dark/light theme pattern.
 
 
 Understanding Custom Palettes
 -----------------------------
 
-QDarkStyleSheet supports fully custom palettes with:
+QDarkStyleSheet supports custom palettes that follow the same pattern as built-in themes:
 
-- **Custom ID**: Any string identifier you want (e.g., 'ocean', 'forest', 'neon')
-- **Custom colors**: Complete freedom to define all colors
+- **Standard IDs**: Custom palettes use 'dark' and/or 'light' IDs (same as built-in themes)
+- **Custom colors**: Complete freedom to define all colors within your palette
 - **Custom color system**: Can use built-in colors or define your own
 - **Generated resources**: The qdarkstyle.utils module generates all necessary files (QSS, QRC, PNG icons)
+- **Theme variants**: Custom themes typically provide both dark and light variants
 
-.. warning::
-   Custom palettes cannot be used with ``qdarkstyle.load_stylesheet()``. 
-   This function only supports the built-in ``DarkPalette`` and ``LightPalette`` classes.
-   
-   The function explicitly validates palette IDs and will exit with an error if you pass a custom palette with any ID other than 'dark' or 'light'.
+.. note::
+   **Important**: Custom palettes with standard 'dark' and 'light' IDs currently cannot be used with ``qdarkstyle.load_stylesheet()``, 
+   which only supports the built-in ``DarkPalette`` and ``LightPalette`` classes.
    
    Custom palettes must be loaded by reading the generated QSS file directly.
+   This design maintains consistency with the dark/light theme architecture.
+
 
 Creating a Custom Palette
 -------------------------
@@ -28,17 +29,17 @@ Creating a Custom Palette
 Basic Structure
 ~~~~~~~~~~~~~~~
 
-All custom palettes must inherit from the ``Palette`` class:
+All custom palettes must inherit from the ``Palette`` class and use standard IDs:
 
 .. code-block:: python
 
     from qdarkstyle.palette import Palette
 
-    class OceanTheme(Palette):
-        """Ocean-inspired custom theme."""
+    class DarkOceanPalette(Palette):
+        """Ocean-inspired dark theme."""
         
-        # Custom ID - can be any string
-        ID = 'ocean'
+        # Standard dark theme ID
+        ID = 'dark'
         
         # Background colors (customize as needed)
         COLOR_BACKGROUND_1 = '#0a1a2e'  # Deep ocean blue
@@ -64,17 +65,52 @@ All custom palettes must inherit from the ``Palette`` class:
         COLOR_DISABLED = '#4a6b8a'
         OPACITY_TOOLTIP = 230
 
+    class LightOceanPalette(Palette):
+        """Ocean-inspired light theme."""
+        
+        # Standard light theme ID
+        ID = 'light'
+        
+        # Light background colors
+        COLOR_BACKGROUND_1 = '#f0f8ff'  # Very light blue
+        COLOR_BACKGROUND_2 = '#e6f3ff'  # Light blue-white
+        COLOR_BACKGROUND_3 = '#dce8ff'  # Medium light blue
+        COLOR_BACKGROUND_4 = '#d2ddff'  # Light blue
+        COLOR_BACKGROUND_5 = '#c8d2ff'  # Medium blue
+        COLOR_BACKGROUND_6 = '#bec7ff'  # Darker blue
+        
+        # Dark text colors for light background
+        COLOR_TEXT_1 = '#0a1a2e'       # Deep ocean blue
+        COLOR_TEXT_2 = '#16213e'       # Dark blue
+        COLOR_TEXT_3 = '#1e2d4f'       # Medium blue
+        COLOR_TEXT_4 = '#253a5e'       # Lighter blue
+        
+        # Accent colors (same as dark theme for consistency)
+        COLOR_ACCENT_1 = '#00d4ff'     # Bright cyan
+        COLOR_ACCENT_2 = '#00b8e6'     # Medium cyan
+        COLOR_ACCENT_3 = '#009ccc'     # Darker cyan
+        COLOR_ACCENT_4 = '#0080b3'     # Dark cyan
+        COLOR_ACCENT_5 = '#006699'     # Very dark cyan
+        
+        COLOR_DISABLED = '#4a6b8a'
+        OPACITY_TOOLTIP = 230
+
 Required Properties
 ~~~~~~~~~~~~~~~~~~~
 
 Every custom palette must define these properties:
 
-- **ID**: Any string identifier for your theme
+- **ID**: Must be either 'dark' or 'light' (standard theme IDs)
 - **Background Colors**: Six levels (COLOR_BACKGROUND_1 to COLOR_BACKGROUND_6)
 - **Text Colors**: Four levels (COLOR_TEXT_1 to COLOR_TEXT_4)
 - **Accent Colors**: Five levels (COLOR_ACCENT_1 to COLOR_ACCENT_5)
 - **Disabled Color**: COLOR_DISABLED for disabled elements
 - **Tooltip Opacity**: OPACITY_TOOLTIP (0-255)
+
+.. note::
+   Custom themes typically provide both dark and light variants for consistency.
+   You can create just one variant if needed, but providing both gives users
+   the flexibility to switch between themes.
 
 Using Custom Color Systems
 ~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -88,10 +124,10 @@ You can mix custom hex colors with the built-in color systems:
     from qdarkstyle.palette import Palette
     from qdarkstyle.colorsystem import Gray, Blue
 
-    class ForestTheme(Palette):
-        """Forest-inspired theme with custom and built-in colors."""
+    class DarkForestPalette(Palette):
+        """Forest-inspired dark theme with custom and built-in colors."""
         
-        ID = 'forest'
+        ID = 'dark'
         
         # Mix custom colors with color system
         COLOR_BACKGROUND_1 = '#1a2f1a'      # Custom dark green
@@ -108,6 +144,35 @@ You can mix custom hex colors with the built-in color systems:
         COLOR_TEXT_4 = Gray.B120
         
         # Custom accent colors
+        COLOR_ACCENT_1 = '#4ade80'
+        COLOR_ACCENT_2 = '#22c55e'
+        COLOR_ACCENT_3 = '#16a34a'
+        COLOR_ACCENT_4 = '#15803d'
+        COLOR_ACCENT_5 = '#166534'
+        
+        COLOR_DISABLED = Gray.B70
+        OPACITY_TOOLTIP = 230
+
+    class LightForestPalette(Palette):
+        """Forest-inspired light theme."""
+        
+        ID = 'light'
+        
+        # Light backgrounds with green tint
+        COLOR_BACKGROUND_1 = '#f0f8f0'      # Very light green
+        COLOR_BACKGROUND_2 = '#e6f3e6'      # Light green
+        COLOR_BACKGROUND_3 = '#dce8dc'      # Medium light green
+        COLOR_BACKGROUND_4 = '#d2ddd2'      # Light green
+        COLOR_BACKGROUND_5 = '#c8d2c8'      # Medium green
+        COLOR_BACKGROUND_6 = '#bec7be'      # Darker green
+        
+        # Dark text for light background
+        COLOR_TEXT_1 = '#1a2f1a'            # Dark green
+        COLOR_TEXT_2 = '#2d4a2d'            # Medium green
+        COLOR_TEXT_3 = '#3f5f3f'            # Lighter green
+        COLOR_TEXT_4 = '#517451'            # Light green
+        
+        # Same accent colors for consistency
         COLOR_ACCENT_1 = '#4ade80'
         COLOR_ACCENT_2 = '#22c55e'
         COLOR_ACCENT_3 = '#16a34a'
@@ -168,17 +233,17 @@ For complete control over all colors, you can create your own color system class
         COOL_GRAY_4 = '#4C566A'   # Light gray
         COOL_GRAY_5 = '#5E81AC'   # Very light gray
 
-Now use your custom color systems in your palette:
+Now use your custom color systems in your palettes:
 
 .. code-block:: python
 
     from qdarkstyle.palette import Palette
     from custom_colors import WarmColors, CoolColors
 
-    class SunsetTheme(Palette):
-        """Warm sunset-inspired theme using custom color system."""
+    class DarkSunsetPalette(Palette):
+        """Warm sunset-inspired dark theme using custom color system."""
         
-        ID = 'sunset'
+        ID = 'dark'
         
         # Use your custom warm colors
         COLOR_BACKGROUND_1 = WarmColors.WARM_GRAY_1    # Very dark background
@@ -204,6 +269,35 @@ Now use your custom color systems in your palette:
         COLOR_DISABLED = WarmColors.WARM_GRAY_3
         OPACITY_TOOLTIP = 230
 
+    class LightSunsetPalette(Palette):
+        """Warm sunset-inspired light theme using custom color system."""
+        
+        ID = 'light'
+        
+        # Light warm backgrounds
+        COLOR_BACKGROUND_1 = '#fff8f0'                 # Very light warm
+        COLOR_BACKGROUND_2 = '#fff0e6'                 # Light warm
+        COLOR_BACKGROUND_3 = '#ffe8dc'                 # Medium light warm
+        COLOR_BACKGROUND_4 = '#ffe0d2'                 # Light warm
+        COLOR_BACKGROUND_5 = '#ffd8c8'                 # Medium warm
+        COLOR_BACKGROUND_6 = '#ffd0be'                 # Darker warm
+        
+        # Dark text for light background
+        COLOR_TEXT_1 = WarmColors.WARM_GRAY_1          # Very dark text
+        COLOR_TEXT_2 = WarmColors.WARM_GRAY_2          # Dark text
+        COLOR_TEXT_3 = WarmColors.WARM_GRAY_3          # Medium text
+        COLOR_TEXT_4 = WarmColors.WARM_GRAY_4          # Light text
+        
+        # Same accent colors for consistency
+        COLOR_ACCENT_1 = WarmColors.RED_LIGHT
+        COLOR_ACCENT_2 = WarmColors.RED_MEDIUM
+        COLOR_ACCENT_3 = WarmColors.RED_DARK
+        COLOR_ACCENT_4 = WarmColors.ORANGE_DARK
+        COLOR_ACCENT_5 = WarmColors.WARM_GRAY_4
+        
+        COLOR_DISABLED = WarmColors.WARM_GRAY_3
+        OPACITY_TOOLTIP = 230
+
 **Why Use Custom Color Systems?**
 
 - **Consistency**: Ensures all colors work harmoniously together
@@ -217,17 +311,17 @@ Complete Workflow
 1. Create Your Palette File
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Create a Python file with your custom palette:
+Create a Python file with your custom palettes:
 
 .. code-block:: python
 
     # my_theme.py
     from qdarkstyle.palette import Palette
 
-    class NeonTheme(Palette):
-        """Cyberpunk neon theme."""
+    class DarkNeonPalette(Palette):
+        """Cyberpunk neon dark theme."""
         
-        ID = 'neon'
+        ID = 'dark'
         
         # Dark backgrounds with neon accents
         COLOR_BACKGROUND_1 = '#0d0d0d'  # Almost black
@@ -253,6 +347,35 @@ Create a Python file with your custom palette:
         COLOR_DISABLED = '#666666'
         OPACITY_TOOLTIP = 230
 
+    class LightNeonPalette(Palette):
+        """Cyberpunk neon light theme."""
+        
+        ID = 'light'
+        
+        # Light backgrounds with neon accents
+        COLOR_BACKGROUND_1 = '#ffffff'  # Pure white
+        COLOR_BACKGROUND_2 = '#f8f8f8'  # Very light gray
+        COLOR_BACKGROUND_3 = '#f0f0f0'  # Light gray
+        COLOR_BACKGROUND_4 = '#e8e8e8'  # Medium light gray
+        COLOR_BACKGROUND_5 = '#e0e0e0'  # Medium gray
+        COLOR_BACKGROUND_6 = '#d8d8d8'  # Darker gray
+        
+        # Dark text colors for light background
+        COLOR_TEXT_1 = '#0d0d0d'        # Almost black
+        COLOR_TEXT_2 = '#1a1a1a'        # Very dark gray
+        COLOR_TEXT_3 = '#262626'        # Dark gray
+        COLOR_TEXT_4 = '#333333'        # Medium gray
+        
+        # Same neon accent colors for consistency
+        COLOR_ACCENT_1 = '#ff0080'      # Hot pink
+        COLOR_ACCENT_2 = '#e6006b'      # Dark pink
+        COLOR_ACCENT_3 = '#cc0066'      # Darker pink
+        COLOR_ACCENT_4 = '#b30055'      # Very dark pink
+        COLOR_ACCENT_5 = '#990044'      # Almost black pink
+        
+        COLOR_DISABLED = '#666666'
+        OPACITY_TOOLTIP = 230
+
 2. Generate Theme Resources
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -266,10 +389,17 @@ Use the qdarkstyle.utils module to generate all necessary files:
 
 .. code-block:: bash
 
+    # Generate dark theme resources
     python -m qdarkstyle.utils \
         --custom-palette-file my_theme.py \
-        --custom-palette-class-name NeonTheme \
-        --base-path ./my_themes
+        --custom-palette-class-name DarkNeonPalette \
+        --base-path ./my_neon_theme
+
+    # Generate light theme resources
+    python -m qdarkstyle.utils \
+        --custom-palette-file my_theme.py \
+        --custom-palette-class-name LightNeonPalette \
+        --base-path ./my_neon_theme
 
 .. note::
    The command-line interface is provided by the ``qdarkstyle.utils`` module. This is the same tool used internally by QDarkStyleSheet for generating built-in themes.
@@ -289,15 +419,26 @@ This creates the complete theme structure:
 
 .. code-block:: text
 
-    my_themes/
-    └── neon/                       # Your custom ID
-        ├── neonstyle.qss          # Generated stylesheet
-        ├── neonstyle.qrc          # Qt resource file
-        ├── neonstyle_rc.py        # Python resource module
-        ├── palette.py             # Your palette class
-        ├── main.scss              # SCSS source
-        ├── _variables.scss        # SCSS variables
-        └── rc/                    # Generated PNG icons (150+ files)
+    my_neon_theme/
+    ├── dark/                      # Dark theme resources
+    │   ├── darkstyle.qss         # Generated dark stylesheet
+    │   ├── darkstyle.qrc         # Qt resource file
+    │   ├── darkstyle_rc.py       # Python resource module
+    │   ├── palette.py            # Your dark palette class
+    │   ├── main.scss             # SCSS source
+    │   ├── _variables.scss       # SCSS variables
+    │   └── rc/                   # Generated PNG icons (150+ files)
+    │       ├── arrow_down.png
+    │       ├── checkbox_checked.png
+    │       └── ... (all icons in your colors)
+    └── light/                     # Light theme resources
+        ├── lightstyle.qss        # Generated light stylesheet
+        ├── lightstyle.qrc        # Qt resource file
+        ├── lightstyle_rc.py      # Python resource module
+        ├── palette.py            # Your light palette class
+        ├── main.scss             # SCSS source
+        ├── _variables.scss       # SCSS variables
+        └── rc/                   # Generated PNG icons (150+ files)
             ├── arrow_down.png
             ├── checkbox_checked.png
             └── ... (all icons in your colors)
@@ -339,36 +480,57 @@ Custom themes **cannot** be used with ``qdarkstyle.load_stylesheet()``. Instead,
 
     app = QApplication(sys.argv)
     
-    # Load your custom stylesheet directly
-    with open('./my_themes/neon/neonstyle.qss', 'r') as f:
+    # Load your custom dark stylesheet directly
+    with open('./my_neon_theme/dark/darkstyle.qss', 'r') as f:
         stylesheet = f.read()
     
     app.setStyleSheet(stylesheet)
     
     window = QMainWindow()
-    window.setWindowTitle("Neon Theme")
+    window.setWindowTitle("Neon Dark Theme")
     window.show()
     
     app.exec_()
 
+    # Or load light theme
+    # with open('./my_neon_theme/light/lightstyle.qss', 'r') as f:
+    #     stylesheet = f.read()
+
 **Method 2: Import generated resources**
+
+There are two recommended approaches for importing custom theme resources:
+
+**Option A: Local theme module (for single applications)**
+
+Place your generated themes in a theme package within your application:
+
+.. code-block:: text
+
+    your_app/
+    ├── main.py
+    └── my_neon_theme/              # Theme package
+        ├── __init__.py
+        ├── dark/                   # Dark theme
+        │   ├── darkstyle.qss
+        │   ├── darkstyle_rc.py
+        │   └── ...
+        └── light/                  # Light theme
+            ├── lightstyle.qss
+            ├── lightstyle_rc.py
+            └── ...
 
 .. code-block:: python
 
-    import sys
     from PyQt5.QtWidgets import QApplication, QMainWindow
     from PyQt5.QtCore import QFile, QTextStream
 
-    # Add your theme path
-    sys.path.insert(0, './my_themes')
-    
-    # Import the generated resources
-    import neon.neonstyle_rc  # This loads the resources
+    # Import the generated dark theme resources
+    import my_neon_theme.dark.darkstyle_rc  # This loads the resources
     
     app = QApplication(sys.argv)
     
-    # Load stylesheet from resources
-    qss_file = QFile(":/qss_icons/neon/neonstyle.qss")
+    # Load dark stylesheet from resources
+    qss_file = QFile(":/qss_icons/dark/darkstyle.qss")
     qss_file.open(QFile.ReadOnly | QFile.Text)
     stream = QTextStream(qss_file)
     stylesheet = stream.readAll()
@@ -376,11 +538,65 @@ Custom themes **cannot** be used with ``qdarkstyle.load_stylesheet()``. Instead,
     app.setStyleSheet(stylesheet)
     
     window = QMainWindow()
-    window.setWindowTitle("Neon Theme with Resources")
+    window.setWindowTitle("Neon Dark Theme with Resources")
     window.show()
     
     app.exec_()
 
+    # Or load light theme
+    # import my_neon_theme.light.lightstyle_rc
+    # qss_file = QFile(":/qss_icons/light/lightstyle.qss")
+
+**Option B: Proper Python package (for reusable themes)**
+
+Create a proper Python package structure for your themes:
+
+.. code-block:: text
+
+    my_neon_theme/
+    ├── setup.py
+    ├── my_neon_theme/
+    │   ├── __init__.py
+    │   ├── dark/
+    │   │   ├── darkstyle.qss
+    │   │   ├── darkstyle_rc.py
+    │   │   └── ...
+    │   └── light/
+    │       ├── lightstyle.qss
+    │       ├── lightstyle_rc.py
+    │       └── ...
+    └── ...
+
+.. code-block:: python
+
+    from PyQt5.QtWidgets import QApplication, QMainWindow
+    from PyQt5.QtCore import QFile, QTextStream
+
+    # Import the generated dark theme resources from installed package
+    import my_neon_theme.dark.darkstyle_rc  # This loads the resources
+    
+    app = QApplication(sys.argv)
+    
+    # Load dark stylesheet from resources
+    qss_file = QFile(":/qss_icons/dark/darkstyle.qss")
+    qss_file.open(QFile.ReadOnly | QFile.Text)
+    stream = QTextStream(qss_file)
+    stylesheet = stream.readAll()
+    
+    app.setStyleSheet(stylesheet)
+    
+    window = QMainWindow()
+    window.setWindowTitle("Neon Dark Theme with Resources")
+    window.show()
+    
+    app.exec_()
+
+    # Or load light theme
+    # import my_neon_theme.light.lightstyle_rc
+    # qss_file = QFile(":/qss_icons/light/lightstyle.qss")
+
+.. note::
+   **Theme Consistency**: By using standard 'dark' and 'light' IDs, your custom themes follow the same pattern as built-in themes, making them more intuitive and potentially compatible with future versions of QDarkStyleSheet.
 
 
 Color Selection Guidelines
@@ -415,7 +631,7 @@ Important Notes
 Limitations and Considerations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-**Cannot use with load_stylesheet()**: Custom palettes cannot be used with ``qdarkstyle.load_stylesheet()``. This function only works with the built-in DarkPalette and LightPalette. The function explicitly validates palette IDs and will exit with an error if you pass a custom palette with any ID other than 'dark' or 'light'.
+**Cannot use with load_stylesheet()**: Custom palettes with standard 'dark' and 'light' IDs currently cannot be used with ``qdarkstyle.load_stylesheet()``. This function only works with the built-in DarkPalette and LightPalette classes. However, by using standard 'dark' and 'light' IDs, custom themes follow the same architecture and could potentially be supported in future versions.
 
 **Resource Management**: Generated themes include resource files that must be properly imported if using Method 2.
 
@@ -423,10 +639,14 @@ Limitations and Considerations
 
 **Qt Binding Compatibility**: Generated resource files work with all Qt bindings (PyQt5, PyQt6, PySide2, PySide6).
 
+**Theme Architecture**: Custom themes follow the same dark/light pattern as built-in themes, providing consistency and potential future compatibility.
+
 Technical Details
 ~~~~~~~~~~~~~~~~~
 
 **Why load_stylesheet() doesn't support custom palettes**: The function validates palette IDs and only accepts 'dark' or 'light'. This is because the function needs to import the correct resource modules (darkstyle_rc or lightstyle_rc) that contain the compiled QSS and icon resources. Custom palettes don't have these pre-compiled resources available in the package, so they must be generated separately and loaded directly.
+
+**Future Compatibility**: By using standard 'dark' and 'light' IDs, custom themes follow the same architecture as built-in themes. This design choice makes it easier to potentially integrate custom themes with the main API in future versions while maintaining backward compatibility.
 
 Troubleshooting
 ---------------
