@@ -148,8 +148,8 @@ Usage Examples
     from qdarkstyle.palette import Palette
     from qdarkstyle.colorsystem import Gray, Blue
     
-    class MyPalette(Palette):
-        ID = 'my_theme'
+    class DarkOceanPalette(Palette):
+        ID = 'dark'  # Must use 'dark' for dark themes
         
         # Background colors
         COLOR_BACKGROUND_1 = Gray.B15

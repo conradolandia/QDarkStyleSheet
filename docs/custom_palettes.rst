@@ -16,10 +16,10 @@ QDarkStyleSheet supports custom palettes that follow the same pattern as built-i
 - **Theme variants**: Custom themes typically provide both dark and light variants
 
 .. note::
-   **Important**: Custom palettes with standard 'dark' and 'light' IDs currently cannot be used with ``qdarkstyle.load_stylesheet()``, 
-   which only supports the built-in ``DarkPalette`` and ``LightPalette`` classes.
+   **Important**: Custom palettes with standard 'dark' and 'light' IDs **CAN** be used with ``qdarkstyle.load_stylesheet()``, 
+   just like the built-in ``DarkPalette`` and ``LightPalette`` classes.
    
-   Custom palettes must be loaded by reading the generated QSS file directly.
+   Custom palettes with other IDs (like 'my_theme') cannot be used with ``load_stylesheet()`` and must be loaded directly from QSS files.
    This design maintains consistency with the dark/light theme architecture.
 
 
@@ -100,7 +100,10 @@ Required Properties
 
 Every custom palette must define these properties:
 
-- **ID**: Must be either 'dark' or 'light' (standard theme IDs)
+- **ID**: **MUST** be either 'dark' or 'light' (standard theme IDs)
+  - Use 'dark' for dark-themed palettes
+  - Use 'light' for light-themed palettes
+  - Custom IDs (like 'my_theme') are not supported by load_stylesheet()
 - **Background Colors**: Six levels (COLOR_BACKGROUND_1 to COLOR_BACKGROUND_6)
 - **Text Colors**: Four levels (COLOR_TEXT_1 to COLOR_TEXT_4)
 - **Accent Colors**: Five levels (COLOR_ACCENT_1 to COLOR_ACCENT_5)
@@ -469,9 +472,33 @@ The asset generation process does several critical things:
 3. Use Your Custom Theme
 ~~~~~~~~~~~~~~~~~~~~~~~~
 
-Custom themes **cannot** be used with ``qdarkstyle.load_stylesheet()``. Instead, use one of these methods:
+Custom themes with standard 'dark'/'light' IDs **CAN** be used with ``qdarkstyle.load_stylesheet()``. For other IDs, use one of these methods:
 
-**Method 1: Load QSS file directly**
+**Method 1: Use load_stylesheet() (Recommended for 'dark'/'light' IDs)**
+
+.. code-block:: python
+
+    import sys
+    from PyQt5.QtWidgets import QApplication, QMainWindow
+    import qdarkstyle
+
+    app = QApplication(sys.argv)
+    
+    # Import your custom palettes
+    from my_theme import DarkNeonPalette, LightNeonPalette
+    
+    # Use with load_stylesheet() - works because IDs are 'dark'/'light'
+    app.setStyleSheet(qdarkstyle.load_stylesheet(palette=DarkNeonPalette))
+    # or
+    # app.setStyleSheet(qdarkstyle.load_stylesheet(palette=LightNeonPalette))
+    
+    window = QMainWindow()
+    window.setWindowTitle("Neon Dark Theme")
+    window.show()
+    
+    app.exec_()
+
+**Method 2: Load QSS file directly (for custom IDs or direct file access)**
 
 .. code-block:: python
 
@@ -496,7 +523,7 @@ Custom themes **cannot** be used with ``qdarkstyle.load_stylesheet()``. Instead,
     # with open('./my_neon_theme/light/lightstyle.qss', 'r') as f:
     #     stylesheet = f.read()
 
-**Method 2: Import generated resources**
+**Method 3: Import generated resources**
 
 There are two recommended approaches for importing custom theme resources:
 
@@ -596,7 +623,7 @@ Create a proper Python package structure for your themes:
     # qss_file = QFile(":/qss_icons/light/lightstyle.qss")
 
 .. note::
-   **Theme Consistency**: By using standard 'dark' and 'light' IDs, your custom themes follow the same pattern as built-in themes, making them more intuitive and potentially compatible with future versions of QDarkStyleSheet.
+   **Theme Consistency**: By using standard 'dark' and 'light' IDs, your custom themes follow the same pattern as built-in themes, making them more intuitive and fully compatible with the current QDarkStyleSheet API.
 
 
 Color Selection Guidelines
@@ -631,7 +658,7 @@ Important Notes
 Limitations and Considerations
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-**Cannot use with load_stylesheet()**: Custom palettes with standard 'dark' and 'light' IDs currently cannot be used with ``qdarkstyle.load_stylesheet()``. This function only works with the built-in DarkPalette and LightPalette classes. However, by using standard 'dark' and 'light' IDs, custom themes follow the same architecture and could potentially be supported in future versions.
+**load_stylesheet() support**: Custom palettes with standard 'dark' and 'light' IDs **CAN** be used with ``qdarkstyle.load_stylesheet()``, just like the built-in DarkPalette and LightPalette classes. Custom palettes with other IDs (like 'my_theme') cannot be used with ``load_stylesheet()`` and must be loaded directly from QSS files.
 
 **Resource Management**: Generated themes include resource files that must be properly imported if using Method 2.
 
@@ -644,7 +671,7 @@ Limitations and Considerations
 Technical Details
 ~~~~~~~~~~~~~~~~~
 
-**Why load_stylesheet() doesn't support custom palettes**: The function validates palette IDs and only accepts 'dark' or 'light'. This is because the function needs to import the correct resource modules (darkstyle_rc or lightstyle_rc) that contain the compiled QSS and icon resources. Custom palettes don't have these pre-compiled resources available in the package, so they must be generated separately and loaded directly.
+**How load_stylesheet() works with custom palettes**: The function validates palette IDs and accepts 'dark' or 'light'. For these IDs, it imports the correct resource modules (darkstyle_rc or lightstyle_rc) that contain the compiled QSS and icon resources. Custom palettes with 'dark'/'light' IDs work because they generate their own resource files with the same structure. Custom palettes with other IDs don't work because the function doesn't know how to locate their resources.
 
 **Future Compatibility**: By using standard 'dark' and 'light' IDs, custom themes follow the same architecture as built-in themes. This design choice makes it easier to potentially integrate custom themes with the main API in future versions while maintaining backward compatibility.
 
