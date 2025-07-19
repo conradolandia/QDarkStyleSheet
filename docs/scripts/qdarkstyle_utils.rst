@@ -44,8 +44,8 @@ Custom palette:
 .. code-block:: bash
 
     python -m qdarkstyle.utils \
-        --custom-palette-file my_palette.py \
-        --custom-palette-class-name MyPalette
+        --custom-palette-file my_theme.py \
+        --custom-palette-class-name DarkNeonPalette
 
 API Reference
 -------------
