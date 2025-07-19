@@ -431,6 +431,23 @@ PyQt5 is installed on your system.
     # check all options included
     $ qdarkstyle.example --help
 
+Custom Themes Demo
+------------------
+
+For a comprehensive demonstration of custom theme creation, run the custom themes demo:
+
+.. code:: bash
+
+    python scripts/custom_themes_demo.py
+
+This demo showcases:
+- Three complete theme examples (Ocean, Forest, Sunset)
+- Real-time theme switching
+- Complete workflow from palette definition to application
+- Comprehensive UI widget testing
+
+For more information, see the :doc:`Custom Themes Demo documentation <scripts/custom_themes_demo>`.
+
 
 Changelog
 ---------

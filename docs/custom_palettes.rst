@@ -697,6 +697,7 @@ Resources
 - **CLI Reference**: See :doc:`scripts/qdarkstyle_utils` for complete command-line options
 - **Color System**: See :doc:`color_reference` for built-in colors
 - **API Reference**: See :doc:`reference/modules` for palette class details
+- **Custom Themes Demo**: See :doc:`scripts/custom_themes_demo` for working examples and testing environment
 
 **External Tools**:
 

@@ -387,6 +387,17 @@ inserted in the issue tracker, as a message. Better than that, use
 modules provided in test folder to create a GUI test, creating a new
 file for it.
 
+**Custom Theme Testing:**
+
+For custom themes, use the custom themes demo to test your theme:
+
+.. code:: bash
+
+   python scripts/custom_themes_demo.py
+
+This provides a comprehensive testing environment with various widgets
+to verify your theme works correctly across different UI elements.
+
 Check `test <./test>`__ files to more details. Tests will keep our
 application stable.
 
