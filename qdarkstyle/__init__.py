@@ -283,7 +283,7 @@ def _load_stylesheet(qt_api='', palette=None):
         palette = LightPalette
     else:
         print("Not recognized ID for palette! Exiting!")
-        print("Only 'dark' and 'light' palette IDs are supported by load_stylesheet().")
+        print("Only 'DarkPalette' and 'LightPalette' palettes (with 'dark' and 'light' IDs respectively) are supported by load_stylesheet().")
         sys.exit(1)
 
     # Thus, by importing the binary we can access the resources
